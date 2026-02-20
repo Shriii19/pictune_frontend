@@ -28,7 +28,7 @@ function App() {
     setResult(null);
 
     try {
-      const res = await fetch("http://localhost:5000/analyze-photo", {
+      const res = await fetch("https://pictune-backend.vercel.app/", {
         method: "POST",
         body: formData,
       });

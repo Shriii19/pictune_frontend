@@ -28,7 +28,7 @@ function App() {
     setResult(null);
 
     try {
-      const res = await fetch("https://pictune-backend.vercel.app/", {
+      const res = await fetch("https://pictune-backend.vercel.app/api/predict", {
         method: "POST",
         body: formData,
       });

@@ -32,7 +32,7 @@ export const register = async (email, password) => {
 };
 
 export const uploadPhoto = async (formData) => {
-  const res = await fetch(`${BASE_URL}/analyze-photo`, {
+  const res = await fetch(`${BASE_URL}/predict`, {
     method: "POST",
     headers: {
       ...getAuthHeaders(),

@@ -4,8 +4,10 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import History from "./pages/History";
+import Home from "./pages/Home";
+import About from "./pages/About";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { useAuth } from "./hooks/useAuth";
+import { useAuth } from "./hooks/useAuth.jsx";
 import "./App.css";
 
 function App() {
@@ -27,7 +29,7 @@ function App() {
               <Route
                 path="/"
                 element={
-                  isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
+                  isAuthenticated ? <Navigate to="/dashboard" replace /> : <Home />
                 }
               />
               <Route
@@ -58,6 +60,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/about" element={<About />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

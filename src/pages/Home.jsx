@@ -25,7 +25,7 @@ export default function Home() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
           <Link
-            to="/register"
+            to="/dashboard"
             className="gradient-btn px-8 py-4 rounded-xl text-base font-semibold text-white shadow-lg shadow-indigo-500/25 animate-neon-pulse"
           >
             <span className="flex items-center gap-2.5">

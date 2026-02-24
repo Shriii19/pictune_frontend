@@ -56,6 +56,11 @@ export const uploadPhoto = async (formData) => {
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
+    if (err.error === "LIMIT_REACHED") {
+      const limitErr = new Error("LIMIT_REACHED");
+      limitErr.code = "LIMIT_REACHED";
+      throw limitErr;
+    }
     throw new Error(err.error || "Upload failed");
   }
 

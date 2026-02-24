@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { uploadPhoto } from "../services/api";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
 
   // 🔥 Generate persistent device id for guest tracking
   useEffect(() => {
@@ -49,6 +51,11 @@ export default function Dashboard() {
       const data = await uploadPhoto(formData);
       setResult(data);
     } catch (err) {
+      if (err.code === "LIMIT_REACHED") {
+        alert("Free limit reached. Please login to continue.");
+        navigate("/login");
+        return;
+      }
       console.error(err);
       alert("Something went wrong: " + err.message);
     } finally {

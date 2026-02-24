@@ -1,8 +1,18 @@
 const BASE_URL = "https://pictune-backend.vercel.app/api";
 
+// 🔥 Ensure device id exists once per browser
+if (!localStorage.getItem("device_id")) {
+  localStorage.setItem("device_id", crypto.randomUUID());
+}
+
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  const deviceId = localStorage.getItem("device_id");
+
+  return {
+    ...(token && { Authorization: `Bearer ${token}` }),
+    "x-device-id": deviceId, // 🔥 important for tracking guests
+  };
 };
 
 export const login = async (email, password) => {
@@ -11,10 +21,12 @@ export const login = async (email, password) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || "Login failed");
   }
+
   return res.json();
 };
 
@@ -24,10 +36,12 @@ export const register = async (email, password) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || "Registration failed");
   }
+
   return res.json();
 };
 
@@ -39,10 +53,12 @@ export const uploadPhoto = async (formData) => {
     },
     body: formData,
   });
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || "Upload failed");
   }
+
   return res.json();
 };
 
@@ -53,9 +69,11 @@ export const getHistory = async () => {
       ...getAuthHeaders(),
     },
   });
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || "Failed to fetch history");
   }
+
   return res.json();
 };

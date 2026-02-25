@@ -53,19 +53,36 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-8">
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-      />
-      <button onClick={handleSubmit} disabled={loading}>
-        Detect Mood
-      </button>
+   <div
+  onClick={() => fileInputRef.current?.click()}
+  onDrop={handleDrop}
+  onDragOver={(e) => e.preventDefault()}
+  className="mt-6 flex flex-col items-center justify-center w-full h-52 rounded-xl border-2 border-dashed border-white/10 bg-white/5 hover:bg-white/10 cursor-pointer transition"
+>
+  {preview ? (
+    <img
+      src={preview}
+      alt="Preview"
+      className="rounded-xl max-h-48 object-cover"
+    />
+  ) : (
+    <>
+      <p className="text-slate-400 text-sm">
+        Drop image or <span className="text-indigo-400">browse</span>
+      </p>
+      <p className="text-xs text-slate-500 mt-1">
+        PNG, JPG up to 10MB
+      </p>
+    </>
+  )}
 
-      {result && <div>Mood: {result.mood}</div>}
-
-      {showLimitModal && <div>Limit reached. Please login.</div>}
-    </div>
+  <input
+    ref={fileInputRef}
+    type="file"
+    accept="image/*"
+    onChange={handleFileChange}
+    className="hidden"
+  />
+</div>
   );
 }

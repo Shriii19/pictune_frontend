@@ -46,29 +46,22 @@ export const register = async (email, password) => {
 };
 
 export const uploadPhoto = async (formData) => {
-  // ensure device id exists
-  let deviceId = localStorage.getItem("device_id");
-  if (!deviceId) {
-    deviceId = crypto.randomUUID();
-    localStorage.setItem("device_id", deviceId);
-  }
+  const deviceId = localStorage.getItem("device_id");
 
   const res = await fetch(`${BASE_URL}/predict`, {
     method: "POST",
     headers: {
       ...getAuthHeaders(),
-      "x-device-id": deviceId,   // ⭐ IMPORTANT
+      "x-device-id": deviceId || "guest",   // ✅ THIS LINE FIXES EVERYTHING
     },
     body: formData,
   });
 
-  const data = await res.json().catch(() => ({}));
-
   if (!res.ok) {
-    throw new Error(data.error || "Upload failed");
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Upload failed");
   }
-
-  return data;
+  return res.json();
 };
 
 export const getHistory = async () => {

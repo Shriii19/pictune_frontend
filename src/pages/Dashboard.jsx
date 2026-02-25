@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { uploadPhoto } from "../services/api";
 
@@ -8,11 +9,11 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   // 🔥 Generate persistent device id for guest tracking
-  useEffect(() => {
-    if (!localStorage.getItem("device_id")) {
-      localStorage.setItem("device_id", crypto.randomUUID());
-    }
-  }, []);
+ useEffect(() => {
+  if (!localStorage.getItem("device_id")) {
+    localStorage.setItem("device_id", crypto.randomUUID());
+  }
+}, []);
 
   const [languageFilter, setLanguageFilter] = useState("all");
   const [photo, setPhoto] = useState(null);

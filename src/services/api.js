@@ -10,6 +10,38 @@ const getAuthHeaders = () => {
   };
 };
 
+export const login = async (email, password) => {
+  const res = await fetch(`${BASE_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Login failed");
+  }
+
+  return data;
+};
+
+export const register = async (email, password) => {
+  const res = await fetch(`${BASE_URL}/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Register failed");
+  }
+
+  return data;
+};
+
 export const uploadPhoto = async (formData) => {
   const res = await fetch(`${BASE_URL}/predict`, {
     method: "POST",
@@ -21,6 +53,20 @@ export const uploadPhoto = async (formData) => {
 
   if (!res.ok) {
     throw new Error(data.error || "Upload failed");
+  }
+
+  return data;
+};
+
+export const getHistory = async () => {
+  const res = await fetch(`${BASE_URL}/history`, {
+    headers: getAuthHeaders(),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "History fetch failed");
   }
 
   return data;

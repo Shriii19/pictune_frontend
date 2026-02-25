@@ -1,4 +1,5 @@
 const BASE_URL = "https://pictune-backend.vercel.app/api";
+import { uploadPhoto } from "../services/api";
 
 // 🔥 Ensure device id exists once per browser
 if (!localStorage.getItem("device_id")) {

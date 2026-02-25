@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { uploadPhoto } from "../services/api";
 
+
 const FREE_LIMIT = 3;
 
 export default function Dashboard() {

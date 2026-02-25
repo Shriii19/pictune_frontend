@@ -46,25 +46,29 @@ export const register = async (email, password) => {
 };
 
 export const uploadPhoto = async (formData) => {
+  // ensure device id exists
+  let deviceId = localStorage.getItem("device_id");
+  if (!deviceId) {
+    deviceId = crypto.randomUUID();
+    localStorage.setItem("device_id", deviceId);
+  }
+
   const res = await fetch(`${BASE_URL}/predict`, {
     method: "POST",
     headers: {
       ...getAuthHeaders(),
+      "x-device-id": deviceId,   // ⭐ IMPORTANT
     },
     body: formData,
   });
 
+  const data = await res.json().catch(() => ({}));
+
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    if (err.error === "LIMIT_REACHED") {
-      const limitErr = new Error("LIMIT_REACHED");
-      limitErr.code = "LIMIT_REACHED";
-      throw limitErr;
-    }
-    throw new Error(err.error || "Upload failed");
+    throw new Error(data.error || "Upload failed");
   }
 
-  return res.json();
+  return data;
 };
 
 export const getHistory = async () => {

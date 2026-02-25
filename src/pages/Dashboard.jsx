@@ -13,29 +13,18 @@ export default function Dashboard() {
   const [preview, setPreview] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [languageFilter, setLanguageFilter] = useState("all");
 
   const fileInputRef = useRef(null);
 
-  // ✅ FILE SELECT
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPhoto(file);
-    setPreview(URL.createObjectURL(file));
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      setPreview(URL.createObjectURL(file));
+    }
   };
 
-  // ✅ DROP SUPPORT
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files?.[0];
-    if (!file || !file.type.startsWith("image/")) return;
-    setPhoto(file);
-    setPreview(URL.createObjectURL(file));
-  };
-
-  const handleDragOver = (e) => e.preventDefault();
-
-  // ✅ SUBMIT
   const handleSubmit = async () => {
     if (!photo) return;
 
@@ -43,8 +32,6 @@ export default function Dashboard() {
     formData.append("photo", photo);
 
     setLoading(true);
-    setResult(null);
-
     try {
       const data = await uploadPhoto(formData);
       setResult(data);
@@ -55,22 +42,27 @@ export default function Dashboard() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4">
+  const filteredSongs =
+    result?.songs?.filter((song) => {
+      if (languageFilter === "all") return true;
+      return song.language?.toLowerCase() === languageFilter;
+    }) || [];
 
-      <h1 className="text-3xl font-bold text-white mb-6">
-        Upload a photo, discover the mood
+  return (
+    <div className="min-h-screen flex flex-col items-center px-4 py-12">
+
+      <h1 className="text-4xl font-bold text-white mb-6 text-center">
+        Upload a photo<br/>
+        <span className="text-indigo-400">discover the mood</span>
       </h1>
 
-      {/* UPLOAD BOX */}
+      {/* Upload */}
       <div
         onClick={() => fileInputRef.current?.click()}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        className="w-full max-w-lg h-56 rounded-xl border-2 border-dashed border-white/20 bg-white/5 flex flex-col items-center justify-center cursor-pointer hover:bg-white/10 transition"
+        className="w-full max-w-xl h-56 rounded-xl border-2 border-dashed border-indigo-500/30 flex items-center justify-center cursor-pointer bg-white/5 hover:bg-white/10 transition"
       >
         {preview ? (
-          <img src={preview} alt="preview" className="max-h-52 rounded-lg" />
+          <img src={preview} className="max-h-52 rounded-lg" />
         ) : (
           <p className="text-slate-400">
             Drop image or <span className="text-indigo-400">browse</span>
@@ -86,32 +78,63 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* BUTTON */}
+      {/* Button */}
       <button
         onClick={handleSubmit}
         disabled={!photo || loading}
-        className="mt-6 px-6 py-3 bg-indigo-600 text-white rounded-lg disabled:opacity-50"
+        className="mt-6 w-full max-w-xl py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold"
       >
         {loading ? "Analyzing..." : "Detect Mood"}
       </button>
 
-      {/* RESULT */}
+      {/* Result */}
       {result && (
-        <div className="mt-8 w-full max-w-lg bg-white/5 p-6 rounded-xl">
-          <p className="text-white font-bold text-xl mb-4">
-            Mood: {result.mood}
-          </p>
+        <div className="w-full max-w-xl mt-8 space-y-6">
 
-          {result.songs?.map((song, i) => (
-            <div key={i} className="flex justify-between py-2 text-slate-300">
-              <span>{song.title}</span>
-              {song.url && (
-                <a href={song.url} target="_blank" className="text-indigo-400">
-                  Listen
-                </a>
-              )}
-            </div>
-          ))}
+          {/* Mood */}
+          <div className="p-6 rounded-xl bg-white/5">
+            <p className="text-slate-400 text-sm">Detected Mood</p>
+            <p className="text-3xl font-bold text-indigo-400">
+              {result.mood}
+            </p>
+          </div>
+
+          {/* Language Filter */}
+          <div className="flex gap-2">
+            {["all","hindi","english"].map(lang => (
+              <button
+                key={lang}
+                onClick={() => setLanguageFilter(lang)}
+                className={`flex-1 py-2 rounded-lg ${
+                  languageFilter === lang
+                    ? "bg-indigo-500 text-white"
+                    : "bg-white/5 text-slate-400"
+                }`}
+              >
+                {lang.toUpperCase()}
+              </button>
+            ))}
+          </div>
+
+          {/* Songs */}
+          <div className="p-6 rounded-xl bg-white/5 space-y-3">
+            {filteredSongs.map((song, i) => (
+              <div key={i} className="flex justify-between">
+                <span>{song.title}</span>
+                {song.url && (
+                  <a
+                    href={song.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-indigo-400"
+                  >
+                    Listen
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+
         </div>
       )}
     </div>

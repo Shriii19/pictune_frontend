@@ -29,7 +29,7 @@ export default function Login() {
       {/* Decorative Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/[0.06] rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-violet-600/[0.06] rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-violet-600/[0.06]  rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center">

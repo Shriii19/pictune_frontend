@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { uploadPhoto } from "../services/api";
+import SignupModal from "../components/SignupModal";
 
 export default function Dashboard() {
 
@@ -15,6 +16,7 @@ export default function Dashboard() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [languageFilter, setLanguageFilter] = useState("all");
+  const [showSignupModal, setShowSignupModal] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -36,7 +38,12 @@ export default function Dashboard() {
       const data = await uploadPhoto(formData);
       setResult(data);
     } catch (err) {
-      alert("Error: " + err.message);
+      // Check if guest limit reached
+      if (err.code === "LIMIT_REACHED") {
+        setShowSignupModal(true);
+      } else {
+        alert("Error: " + err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -59,7 +66,7 @@ export default function Dashboard() {
       <div className="text-center max-w-2xl mb-14">
         <h1 className="text-5xl font-extrabold text-white leading-tight">
           Turn any photo into
-          <span className="block bg-gradient-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text">
+          <span className="block bg-linear-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text">
             the perfect soundtrack
           </span>
         </h1>
@@ -75,7 +82,7 @@ export default function Dashboard() {
           onClick={() => fileInputRef.current?.click()}
           className="group relative flex flex-col items-center justify-center h-60 rounded-2xl border border-indigo-500/40 cursor-pointer overflow-hidden transition hover:bg-white/10"
         >
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-gradient-to-br from-indigo-500/10 to-purple-500/10"/>
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-linear-to-br from-indigo-500/10 to-purple-500/10"/>
 
           {preview ? (
             <img
@@ -106,7 +113,7 @@ export default function Dashboard() {
         <button
           onClick={handleSubmit}
           disabled={!photo || loading}
-          className="mt-6 w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-500 shadow-lg shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition disabled:opacity-40"
+          className="mt-6 w-full py-3 rounded-xl font-semibold text-white bg-linear-to-r from-indigo-500 to-purple-500 shadow-lg shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition disabled:opacity-40"
         >
           {loading ? (
             <div className="flex items-center justify-center gap-3">
@@ -128,7 +135,7 @@ export default function Dashboard() {
           {/* MOOD CARD */}
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6">
             <p className="text-slate-400 text-sm">Detected Mood</p>
-            <p className="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text">
+            <p className="text-4xl font-bold bg-linear-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text">
               {result.mood}
             </p>
           </div>
@@ -163,7 +170,7 @@ export default function Dashboard() {
                   className="flex items-center justify-between gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br from-indigo-500/30 to-purple-500/30 border border-white/10 text-white font-bold text-lg">
+                    <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-linear-to-br from-indigo-500/30 to-purple-500/30 border border-white/10 text-white font-bold text-lg">
   {song.title?.charAt(0)?.toUpperCase() || "🎵"}
 </div>
                     <div>
@@ -189,6 +196,12 @@ export default function Dashboard() {
 
         </div>
       )}
+
+      {/* Signup Modal */}
+      <SignupModal 
+        isOpen={showSignupModal} 
+        onClose={() => setShowSignupModal(false)} 
+      />
     </div>
   );
 }

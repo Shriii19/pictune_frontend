@@ -11,9 +11,11 @@ export default function History() {
     const fetchHistory = async () => {
       try {
         const data = await getHistory();
-        setHistory(data);
+        console.log("History data received:", data);
+        setHistory(Array.isArray(data) ? data : []);
       } catch (err) {
-        setError(err.message);
+        console.error("History fetch error:", err);
+        setError(err.message || "Failed to load history");
       } finally {
         setLoading(false);
       }
@@ -58,7 +60,14 @@ export default function History() {
                 <line x1="9" y1="9" x2="15" y2="15" />
               </svg>
             </div>
-            <p className="text-red-400 text-sm">{error}</p>
+            <h3 className="text-lg font-semibold text-red-400 mb-2">Error Loading History</h3>
+            <p className="text-red-400/80 text-sm mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-red-400 text-sm font-medium transition-colors"
+            >
+              Retry
+            </button>
           </div>
         ) : history.length === 0 ? (
           <div className="glass-card rounded-2xl p-16 text-center animate-slide-up">

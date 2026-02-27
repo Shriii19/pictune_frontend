@@ -65,15 +65,25 @@ export const uploadPhoto = async (formData) => {
 };
 
 export const getHistory = async () => {
-  const res = await fetch(`${BASE_URL}/history`, {
-    headers: getAuthHeaders(),
-  });
+  try {
+    const res = await fetch(`${BASE_URL}/history`, {
+      headers: getAuthHeaders(),
+    });
 
-  const data = await res.json();
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || data.message || "History fetch failed");
+    }
 
-  if (!res.ok) {
-    throw new Error(data.error || "History fetch failed");
+    const data = await res.json();
+    
+    // Return the history array (handle both direct array and nested response)
+    return data.history || data;
+  } catch (error) {
+    // Handle network errors
+    if (error.message === "Failed to fetch" || error instanceof TypeError) {
+      throw new Error("Unable to connect to server. Please check your internet connection or try again later.");
+    }
+    throw error;
   }
-
-  return data;
 };

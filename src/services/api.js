@@ -52,6 +52,12 @@ export const uploadPhoto = async (formData) => {
   const data = await res.json();
 
   if (!res.ok) {
+    // Check if guest limit reached
+    if (res.status === 403 && data.error === "LIMIT_REACHED") {
+      const error = new Error(data.message || "Please sign up to continue");
+      error.code = "LIMIT_REACHED";
+      throw error;
+    }
     throw new Error(data.error || "Upload failed");
   }
 

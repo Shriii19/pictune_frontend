@@ -1,31 +1,39 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { uploadPhoto } from "../services/api";
-import SignupModal from "../components/SignupModal";
 
 export default function Dashboard() {
-
-  // Ensure device id exists
-  useEffect(() => {
-    if (!localStorage.getItem("device_id")) {
-      localStorage.setItem("device_id", crypto.randomUUID());
-    }
-  }, []);
-
+  const [languageFilter, setLanguageFilter] = useState("all");
   const [photo, setPhoto] = useState(null);
   const [preview, setPreview] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [languageFilter, setLanguageFilter] = useState("all");
-  const [showSignupModal, setShowSignupModal] = useState(false);
-
+  const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPhoto(file);
-    setPreview(URL.createObjectURL(file));
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      setPreview(URL.createObjectURL(file));
+    }
   };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      setPhoto(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = () => setDragOver(false);
 
   const handleSubmit = async () => {
     if (!photo) return;
@@ -34,16 +42,14 @@ export default function Dashboard() {
     formData.append("photo", photo);
 
     setLoading(true);
+    setResult(null);
+
     try {
       const data = await uploadPhoto(formData);
       setResult(data);
     } catch (err) {
-      // Check if guest limit reached
-      if (err.code === "LIMIT_REACHED") {
-        setShowSignupModal(true);
-      } else {
-        alert("Error: " + err.message);
-      }
+      console.error(err);
+      alert("Something went wrong: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -55,51 +61,86 @@ export default function Dashboard() {
       return song.language?.toLowerCase() === languageFilter;
     }) || [];
 
+  const clearPhoto = () => {
+    setPhoto(null);
+    setPreview("");
+    setResult(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   return (
-    <div className="min-h-screen px-6 py-16 flex flex-col items-center relative overflow-hidden">
-
-      {/* Background glow */}
-      <div className="absolute -top-48 -left-48 w-[600px] h-[600px] bg-indigo-600/20 blur-[200px] rounded-full"/>
-      <div className="absolute -bottom-48 -right-48 w-[600px] h-[600px] bg-purple-600/20 blur-[200px] rounded-full"/>
-
-      {/* HEADER */}
-      <div className="text-center max-w-2xl mb-14">
-        <h1 className="text-5xl font-extrabold text-white leading-tight">
-          Turn any photo into
-          <span className="block bg-linear-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text">
-            the perfect soundtrack
-          </span>
+    <div className="relative min-h-[calc(100vh-64px)] flex flex-col items-center px-4 sm:px-6 py-10 md:py-14">
+      {/* Page Header */}
+      <div className="text-center mb-10 animate-slide-up max-w-2xl">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/8 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-5">
+          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+          AI-Powered Mood Detection
+        </div>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+          Upload a photo,<br />
+          <span className="gradient-text">discover the mood</span>
         </h1>
-        <p className="text-slate-400 mt-4">
-          Upload an image and let AI detect the mood and suggest matching songs instantly.
+        <p className="text-slate-400 mt-4 text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
+          Let AI analyze your photo&apos;s mood and recommend the perfect songs to match the vibe.
         </p>
       </div>
 
-      {/* UPLOAD CARD */}
-      <div className="w-full max-w-xl backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-xl">
-
+      {/* Main Card */}
+      <div className="w-full max-w-2xl glass-card rounded-2xl p-6 md:p-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+        {/* Upload Zone */}
         <div
           onClick={() => fileInputRef.current?.click()}
-          className="group relative flex flex-col items-center justify-center h-60 rounded-2xl border border-indigo-500/40 cursor-pointer overflow-hidden transition hover:bg-white/10"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          className={`drop-zone relative flex flex-col items-center justify-center w-full rounded-xl cursor-pointer border-2 border-dashed transition-all duration-300 ${
+            dragOver
+              ? "border-indigo-400 bg-indigo-500/6"
+              : preview
+              ? "border-transparent bg-transparent p-0"
+              : "border-white/8 bg-white/2 hover:border-indigo-500/30 hover:bg-white/4"
+          } ${!preview ? "h-48 md:h-56" : ""}`}
         >
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-linear-to-br from-indigo-500/10 to-purple-500/10"/>
-
           {preview ? (
-            <img
-              src={preview}
-              className="max-h-56 rounded-xl object-cover transition duration-500 group-hover:scale-[1.03]"
-            />
+            <div className="relative w-full group">
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="w-full max-h-72 object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                />
+              </div>
+              {/* Overlay on hover */}
+              <div className="absolute inset-0 rounded-xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <button
+                  onClick={(e) => { e.stopPropagation(); clearPhoto(); }}
+                  className="px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-colors"
+                >
+                  Remove & Upload New
+                </button>
+              </div>
+              {/* File name badge */}
+              <div className="absolute bottom-3 left-3 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm text-xs text-white/80 font-medium">
+                {photo?.name}
+              </div>
+            </div>
           ) : (
-            <div className="text-center">
-              <p className="text-slate-300 text-lg font-medium">
-                Drop image or <span className="text-indigo-400">browse</span>
+            <div className="flex flex-col items-center text-center px-4">
+              <div className="w-14 h-14 rounded-2xl bg-indigo-500/8 border border-indigo-500/15 flex items-center justify-center mb-4">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+              </div>
+              <p className="text-sm text-slate-300 font-medium">
+                Drop your image here, or <span className="text-indigo-400">browse</span>
               </p>
-              <p className="text-xs text-slate-500 mt-1">
-                PNG, JPG up to 10MB
+              <p className="text-xs text-slate-500 mt-1.5">
+                Supports PNG, JPG, JPEG up to 10MB
               </p>
             </div>
           )}
-
           <input
             ref={fileInputRef}
             type="file"
@@ -109,99 +150,153 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* BUTTON */}
-        <button
-          onClick={handleSubmit}
-          disabled={!photo || loading}
-          className="mt-6 w-full py-3 rounded-xl font-semibold text-white bg-linear-to-r from-indigo-500 to-purple-500 shadow-lg shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition disabled:opacity-40"
-        >
-          {loading ? (
-            <div className="flex items-center justify-center gap-3">
-              <div className="flex gap-1">
-                <span className="w-2 h-2 bg-white rounded-full animate-bounce"/>
-                <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-100"/>
-                <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-200"/>
-              </div>
-              <span>AI analyzing your vibe…</span>
-            </div>
-          ) : "Detect Mood"}
-        </button>
-      </div>
-
-      {/* RESULTS */}
-      {result && (
-        <div className="w-full max-w-xl mt-12 space-y-6 animate-fade-in">
-
-          {/* MOOD CARD */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6">
-            <p className="text-slate-400 text-sm">Detected Mood</p>
-            <p className="text-4xl font-bold bg-linear-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text">
-              {result.mood}
-            </p>
-          </div>
-
-          {/* FILTER */}
+        {/* Language Filter */}
+        <div className="mt-6">
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+            Song Language
+          </p>
           <div className="flex gap-2">
-            {["all","hindi","english"].map(lang => (
+            {[
+              { key: "all", label: "All Languages" },
+              { key: "hindi", label: "Hindi" },
+              { key: "english", label: "English" },
+            ].map((opt) => (
               <button
-                key={lang}
-                onClick={() => setLanguageFilter(lang)}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
-                  languageFilter === lang
-                    ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
-                    : "bg-white/5 text-slate-400 hover:bg-white/10"
+                key={opt.key}
+                onClick={() => setLanguageFilter(opt.key)}
+                className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  languageFilter === opt.key
+                    ? "bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 shadow-lg shadow-indigo-500/10"
+                    : "bg-white/3 border border-white/6 text-slate-400 hover:bg-white/6 hover:text-slate-300"
                 }`}
               >
-                {lang.toUpperCase()}
+                {opt.label}
               </button>
             ))}
           </div>
+        </div>
 
-          {/* SONGS */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6 space-y-3">
-            {filteredSongs.length === 0 ? (
-              <p className="text-slate-500 text-sm text-center py-4">
-                No songs for this language. Try another filter.
-              </p>
-            ) : (
-              filteredSongs.map((song, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-linear-to-br from-indigo-500/30 to-purple-500/30 border border-white/10 text-white font-bold text-lg">
-  {song.title?.charAt(0)?.toUpperCase() || "🎵"}
-</div>
-                    <div>
-                      <p className="text-white text-sm font-medium">{song.title}</p>
-                      <p className="text-xs text-slate-400">{song.language}</p>
-                    </div>
-                  </div>
+        {/* Submit Button */}
+        <button
+          onClick={handleSubmit}
+          className={`gradient-btn mt-6 w-full py-3.5 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+            !photo ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={loading || !photo}
+        >
+          {loading ? (
+            <span className="flex items-center justify-center gap-2.5">
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              Analyzing your photo...
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              Detect Mood
+            </span>
+          )}
+        </button>
+      </div>
 
-                  {song.url && (
-                    <a
-                      href={song.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-indigo-400 text-sm hover:text-indigo-300"
-                    >
-                      ▶ Play
-                    </a>
-                  )}
-                </div>
-              ))
-            )}
+      {/* Results Section */}
+      {result && (
+        <div className="w-full max-w-2xl mt-8 space-y-6 animate-slide-up">
+          {/* Mood Card */}
+          <div className="glass-card rounded-2xl p-6 md:p-8">
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Detected Mood</p>
+                <p className="text-3xl font-bold gradient-text">{result.mood}</p>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-indigo-500/20 to-violet-500/20 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                  <line x1="9" y1="9" x2="9.01" y2="9" />
+                  <line x1="15" y1="9" x2="15.01" y2="9" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Labels */}
+            <div>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">AI Labels</p>
+              <div className="flex flex-wrap gap-2">
+                {result.labels?.map((label, idx) => (
+                  <span
+                    key={idx}
+                    className="label-badge px-3 py-1.5 rounded-lg text-xs font-medium text-indigo-200"
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
+          {/* Songs Card */}
+          <div className="glass-card rounded-2xl p-6 md:p-8">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-linear-to-br from-violet-500/20 to-pink-500/20 border border-violet-500/20 flex items-center justify-center">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">Suggested Songs</p>
+                  <p className="text-xs text-slate-500">{filteredSongs.length} tracks found</p>
+                </div>
+              </div>
+            </div>
+
+            {filteredSongs.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-sm text-slate-500">No songs for this language filter. Try &quot;All Languages&quot;.</p>
+              </div>
+            ) : (
+              <div className="space-y-2 stagger-children">
+                {filteredSongs.map((song, idx) => (
+                  <div
+                    key={idx}
+                    className="song-item flex items-center justify-between bg-white/2 border border-white/6 rounded-xl px-4 py-3 animate-slide-up"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-lg bg-linear-to-br from-indigo-500/15 to-violet-500/15 border border-indigo-500/10 flex items-center justify-center shrink-0">
+                        <span className="text-xs font-bold text-indigo-300">{idx + 1}</span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-sm text-white truncate">{song.title}</p>
+                        <p className="text-xs text-slate-400 truncate">{song.artist} <span className="text-slate-600">•</span> {song.language}</p>
+                      </div>
+                    </div>
+                    {song.url && (
+                      <a
+                        href={song.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 ml-3 px-3.5 py-1.5 rounded-lg bg-indigo-500/8 border border-indigo-500/20 text-indigo-300 text-xs font-medium hover:bg-indigo-500/15 hover:text-indigo-200 transition-all duration-200"
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                          </svg>
+                          Listen
+                        </span>
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
-
-      {/* Signup Modal */}
-      <SignupModal 
-        isOpen={showSignupModal} 
-        onClose={() => setShowSignupModal(false)} 
-      />
     </div>
   );
 }

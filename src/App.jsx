@@ -46,7 +46,11 @@ function App() {
               />
               <Route
                 path="/dashboard"
-                element={<Dashboard />}
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
               />
               <Route
                 path="/history"

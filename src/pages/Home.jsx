@@ -124,6 +124,74 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Features Section */}
+      <div className="w-full max-w-5xl mt-16 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+        <h2 className="text-center text-2xl font-bold text-white mb-12">
+          Why Choose <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Pictune</span>
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            {
+              title: "Lightning Fast",
+              desc: "Get song recommendations in seconds with our optimized AI engine",
+              icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                </svg>
+              ),
+              color: "from-yellow-400 to-orange-500",
+              bgGlow: "group-hover:shadow-yellow-500/20"
+            },
+            {
+              title: "Smart AI",
+              desc: "Advanced mood detection analyzing colors, objects, and context",
+              icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                </svg>
+              ),
+              color: "from-purple-400 to-pink-500",
+              bgGlow: "group-hover:shadow-purple-500/20"
+            },
+            {
+              title: "Curated Picks",
+              desc: "Handpicked playlists and songs from premium music sources",
+              icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z" />
+                </svg>
+              ),
+              color: "from-green-400 to-emerald-500",
+              bgGlow: "group-hover:shadow-green-500/20"
+            },
+            {
+              title: "Save History",
+              desc: "Access your past searches and rediscover perfect matches anytime",
+              icon: (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              ),
+              color: "from-blue-400 to-cyan-500",
+              bgGlow: "group-hover:shadow-blue-500/20"
+            },
+          ].map((feature, idx) => (
+            <div
+              key={idx}
+              className={`group glass-card rounded-xl p-6 text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-xl ${feature.bgGlow} animate-scale-bounce`}
+              style={{ animationDelay: `${0.35 + idx * 0.1}s` }}
+            >
+              <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${feature.color} text-white mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg`}>
+                {feature.icon}
+              </div>
+              <h3 className="text-base font-semibold text-white mb-2">{feature.title}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

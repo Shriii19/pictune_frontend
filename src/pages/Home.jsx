@@ -2,17 +2,21 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <div className="relative min-h-[calc(100vh-64px)] flex flex-col items-center justify-center px-4 sm:px-6 py-16 md:py-24">
+    <div className="relative min-h-[calc(100vh-64px)] flex flex-col items-center justify-center px-4 sm:px-6 py-16 md:py-24 overflow-hidden">
+      {/* Animated background dots */}
+      <div className="absolute inset-0 bg-dot-pattern opacity-30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+      
       {/* Hero */}
-      <div className="text-center max-w-3xl animate-slide-up">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/8 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-8 animate-fade-in">
+      <div className="relative z-10 text-center max-w-3xl animate-slide-up">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-400/30 text-indigo-300 text-xs font-medium mb-8 animate-fade-in glow-border-animated">
           <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
           AI-Powered Music Discovery
         </div>
 
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-tight mb-6">
           Find the perfect{" "}
-          <span className="gradient-text">soundtrack</span>
+          <span className="gradient-text-animated bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x">soundtrack</span>
           <br />
           for every photo
         </h1>
@@ -26,10 +30,11 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
           <Link
             to="/dashboard"
-            className="gradient-btn px-8 py-4 rounded-xl text-base font-semibold text-white shadow-lg shadow-indigo-500/25 animate-neon-pulse"
+            className="group gradient-btn px-8 py-4 rounded-xl text-base font-semibold text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 hover:scale-105 animate-neon-pulse relative overflow-hidden"
           >
-            <span className="flex items-center gap-2.5">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="relative flex items-center gap-2.5">
+              <svg className="group-hover:translate-x-0.5 transition-transform duration-200" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="5 3 19 12 5 21 5 3" />
               </svg>
               Try Now — It&apos;s Free
@@ -37,9 +42,15 @@ export default function Home() {
           </Link>
           <Link
             to="/about"
-            className="px-6 py-3.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white border border-white/8 hover:border-white/20 hover:bg-white/4 transition-all duration-200"
+            className="group px-6 py-3.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white border border-white/8 hover:border-indigo-400/40 hover:bg-white/5 transition-all duration-300 relative overflow-hidden"
           >
-            Learn how it works
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="relative flex items-center gap-2">
+              Learn how it works
+              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </span>
           </Link>
         </div>
       </div>

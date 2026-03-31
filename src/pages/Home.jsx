@@ -110,15 +110,45 @@ export default function Home() {
             ].map((item, idx) => (
               <div
                 key={idx}
-                className="relative text-center animate-scale-bounce"
+                className="relative text-center animate-scale-bounce group cursor-default"
                 style={{ animationDelay: `${0.2 + idx * 0.12}s` }}
               >
-                <div className="relative z-10 mx-auto w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/8 flex flex-col items-center justify-center mb-3 hover:border-indigo-500/30 hover:bg-white/[0.06] transition-all duration-300">
-                  <span className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: item.color }}>{item.step}</span>
-                  {item.icon}
+                <div className="relative z-10 mx-auto w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/8 flex flex-col items-center justify-center mb-3 hover:border-indigo-500/40 hover:bg-white/[0.08] transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1">
+                  <span className="text-[10px] font-bold uppercase tracking-widest mb-0.5 transition-colors duration-300" style={{ color: item.color }}>{item.step}</span>
+                  <div className="group-hover:scale-110 transition-transform duration-300">
+                    {item.icon}
+                  </div>
                 </div>
-                <h3 className="text-sm font-semibold text-white mb-1">{item.title}</h3>
-                <p className="text-xs text-slate-500 leading-relaxed max-w-[200px] mx-auto">{item.desc}</p>
+                <h3 className="text-sm font-semibold text-white mb-1 group-hover:text-indigo-300 transition-colors duration-300">{item.title}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed max-w-[200px] mx-auto group-hover:text-slate-400 transition-colors duration-300">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Section */}
+      <div className="w-full max-w-4xl mt-16 animate-slide-up" style={{ animationDelay: "0.25s" }}>
+        <div className="glass-card rounded-2xl p-8 md:p-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { value: "50K+", label: "Photos Analyzed", icon: "📸" },
+              { value: "99.2%", label: "Accuracy Rate", icon: "🎯" },
+              { value: "15K+", label: "Happy Users", icon: "⚡" },
+              { value: "100K+", label: "Songs Matched", icon: "🎵" },
+            ].map((stat, idx) => (
+              <div
+                key={idx}
+                className="text-center group cursor-default animate-scale-bounce"
+                style={{ animationDelay: `${0.3 + idx * 0.08}s` }}
+              >
+                <div className="text-3xl mb-2 group-hover:scale-125 transition-transform duration-300">
+                  {stat.icon}
+                </div>
+                <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-1 group-hover:scale-110 transition-transform duration-300">
+                  {stat.value}
+                </div>
+                <div className="text-xs md:text-sm text-slate-400">{stat.label}</div>
               </div>
             ))}
           </div>

@@ -42,6 +42,22 @@ export const register = async (email, password) => {
   return data;
 };
 
+export const verifyOtp = async (email, otp) => {
+  const res = await fetch(`${BASE_URL}/verify-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, otp }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "OTP verification failed");
+  }
+
+  return data;
+};
+
 export const uploadPhoto = async (formData) => {
   const res = await fetch(`${BASE_URL}/predict`, {
     method: "POST",

@@ -44,12 +44,14 @@ function App() {
                   isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />
                 }
               />
-              <proctectedRoute>
               <Route
                 path="/dashboard"
-                element={<Dashboard />}
-                />
-                </proctectedRoute>
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/history" 
                 element={

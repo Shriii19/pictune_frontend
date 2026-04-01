@@ -1,7 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { uploadPhoto } from "../services/api";
+import { useAuth } from "../hooks/useAuth.jsx";
 
 export default function Dashboard() {
+  const { token } = useAuth();
+  const navigate = useNavigate();
   const [languageFilter, setLanguageFilter] = useState("all");
   const [photo, setPhoto] = useState(null);
   const [preview, setPreview] = useState("");
@@ -9,6 +13,16 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
+  const [guestCount, setGuestCount] = useState(
+    Number(localStorage.getItem("guest_count")) || 0
+  );
+
+  useEffect(() => {
+    const saved = localStorage.getItem("last_result");
+    if (saved) {
+      try { setResult(JSON.parse(saved)); } catch { /* ignore */ }
+    }
+  }, []);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -38,6 +52,12 @@ export default function Dashboard() {
   const handleSubmit = async () => {
     if (!photo) return;
 
+    if (!token && guestCount >= 3) {
+      alert("Please signup to continue \uD83C\uDFB5");
+      navigate("/login");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("photo", photo);
 
@@ -47,6 +67,13 @@ export default function Dashboard() {
     try {
       const data = await uploadPhoto(formData);
       setResult(data);
+      localStorage.setItem("last_result", JSON.stringify(data));
+
+      if (!token) {
+        const newCount = guestCount + 1;
+        setGuestCount(newCount);
+        localStorage.setItem("guest_count", String(newCount));
+      }
     } catch (err) {
       console.error(err);
       alert("Something went wrong: " + err.message);
@@ -200,6 +227,21 @@ export default function Dashboard() {
           )}
         </button>
       </div>
+
+      {/* Guest limit warning */}
+      {!token && guestCount >= 3 && (
+        <div className="w-full max-w-2xl mt-6 glass-card rounded-2xl p-5 border border-red-500/20 text-center animate-slide-up">
+          <p className="text-red-400 text-sm font-medium">
+            You&apos;ve used all 3 free tries. Sign up to continue using PicTune! 🚀
+          </p>
+          <button
+            onClick={() => navigate("/register")}
+            className="gradient-btn mt-3 px-6 py-2 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/20"
+          >
+            Sign Up Free
+          </button>
+        </div>
+      )}
 
       {/* Results Section */}
       {result && (

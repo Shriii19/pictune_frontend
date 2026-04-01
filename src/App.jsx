@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import History from "./pages/History";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -43,11 +44,17 @@ function App() {
                   isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />
                 }
               />
+              <proctectedRoute>
               <Route
                 path="/dashboard"
+                element={<Dashboard />}
+                />
+                </proctectedRoute>
+              <Route
+                path="/history" 
                 element={
                   <ProtectedRoute>
-                    <Dashboard />
+                    <History />
                   </ProtectedRoute>
                 }
               />

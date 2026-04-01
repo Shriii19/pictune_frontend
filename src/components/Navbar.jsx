@@ -81,6 +81,25 @@ export default function Navbar() {
                     Our Mission
                   </span>
                 </Link>
+                <Link
+                  to="/history"
+                  className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive("/history")
+                      ? "text-white bg-white/8"
+                      : "text-slate-400 hover:text-white hover:bg-white/4"
+                  }`}
+                >
+                  {isActive("/history") && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-indigo-400" />
+                  )}
+                  <span className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    History
+                  </span>
+                </Link>
                 <div className="w-px h-6 bg-white/8 mx-2" />
                 <button
                   onClick={handleLogout}
@@ -165,6 +184,15 @@ export default function Navbar() {
                   }`}
                 >
                   our mission
+                </Link>
+                <Link
+                  to="/history"
+                  onClick={() => setMobileOpen(false)}
+                  className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    isActive("/history") ? "text-white bg-white/8" : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  History
                 </Link>
                 <button
                   onClick={() => { setMobileOpen(false); handleLogout(); }}

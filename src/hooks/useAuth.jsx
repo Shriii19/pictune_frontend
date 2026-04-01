@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
 
   const login = (newToken) => {
     localStorage.setItem("token", newToken);
+    localStorage.removeItem("guest_count");
     setToken(newToken);
   };
 

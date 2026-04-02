@@ -24,7 +24,7 @@ export default function Navbar() {
             to={isAuthenticated ? "/dashboard" : "/"}
             className="flex items-center gap-2.5 group"
           >
-            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-shadow duration-300">
+            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/45 group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 18V5l12-2v13" />
                 <circle cx="6" cy="18" r="3" />
@@ -44,13 +44,10 @@ export default function Navbar() {
                   to="/dashboard"
                   className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive("/dashboard")
-                      ? "text-white bg-white/8"
-                      : "text-slate-400 hover:text-white hover:bg-white/4"
+                      ? "text-white bg-indigo-500/15 border border-indigo-500/25"
+                      : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
                   }`}
                 >
-                  {isActive("/dashboard") && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-indigo-400" />
-                  )}
                   <span className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -63,15 +60,12 @@ export default function Navbar() {
                 </Link>
                 <Link
                   to="/about"
-                  className={`animated-underline relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive("/about")
-                      ? "text-white bg-white/8"
-                      : "text-slate-400 hover:text-white hover:bg-white/4"
+                      ? "text-white bg-violet-500/15 border border-violet-500/25"
+                      : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
                   }`}
                 >
-                  {isActive("/about") && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-indigo-400" />
-                  )}
                   <span className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -85,13 +79,10 @@ export default function Navbar() {
                   to="/history"
                   className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive("/history")
-                      ? "text-white bg-white/8"
-                      : "text-slate-400 hover:text-white hover:bg-white/4"
+                      ? "text-white bg-violet-500/15 border border-violet-500/25"
+                      : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
                   }`}
                 >
-                  {isActive("/history") && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-indigo-400" />
-                  )}
                   <span className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="10" />
@@ -103,7 +94,7 @@ export default function Navbar() {
                 <div className="w-px h-6 bg-white/8 mx-2" />
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/8 transition-all duration-200"
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/8 border border-transparent hover:border-red-500/20 transition-all duration-200"
                 >
                   <span className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -119,7 +110,7 @@ export default function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/4 transition-all duration-200"
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-200"
                 >
                   Sign In
                 </Link>
@@ -135,7 +126,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   to="/register"
-                  className="gradient-btn px-5 py-2 rounded-lg text-sm font-semibold text-white shadow-lg shadow-indigo-500/20"
+                  className="gradient-btn px-5 py-2 rounded-lg text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/35 hover:scale-[1.03] transition-all duration-200"
                 >
                   Get Started
                 </Link>

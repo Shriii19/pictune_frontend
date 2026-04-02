@@ -3,6 +3,26 @@ import { useNavigate } from "react-router-dom";
 import { uploadPhoto } from "../services/api";
 import { useAuth } from "../hooks/useAuth.jsx";
 
+/* ── Waveform bars for mood display ─────────────────────── */
+function MusicBars({ className = "" }) {
+  return (
+    <span className={`music-bars ${className}`} aria-hidden="true">
+      <span /><span /><span /><span /><span />
+    </span>
+  );
+}
+
+/* ── Mood-specific colour ────────────────────────────────── */
+function getMoodStyle(mood) {
+  const m = (mood || "").toLowerCase();
+  if (m.includes("happy") || m.includes("joy"))       return { text: "text-amber-300",  border: "border-amber-500/25",  bg: "from-amber-500/10 to-yellow-500/5" };
+  if (m.includes("sad")   || m.includes("depress"))   return { text: "text-blue-300",   border: "border-blue-500/25",   bg: "from-blue-500/10 to-cyan-500/5" };
+  if (m.includes("energet") || m.includes("excit"))   return { text: "text-orange-300", border: "border-orange-500/25", bg: "from-orange-500/10 to-red-500/5" };
+  if (m.includes("calm")  || m.includes("peace"))     return { text: "text-teal-300",   border: "border-teal-500/25",   bg: "from-teal-500/10 to-green-500/5" };
+  if (m.includes("romantic") || m.includes("love"))   return { text: "text-pink-300",   border: "border-pink-500/25",   bg: "from-pink-500/10 to-rose-500/5" };
+  return { text: "text-violet-300", border: "border-violet-500/25", bg: "from-violet-500/10 to-indigo-500/5" };
+}
+
 export default function Dashboard() {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -153,12 +173,23 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="flex flex-col items-center text-center px-4">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-500/8 border border-indigo-500/15 flex items-center justify-center mb-4">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" />
-                  <line x1="12" y1="3" x2="12" y2="15" />
-                </svg>
+              {/* Upload icon with pulsing rings */}
+              <div className="relative w-20 h-20 flex items-center justify-center mb-5">
+                {!dragOver && (
+                  <>
+                    <span className="absolute w-20 h-20 rounded-full border border-indigo-500/20 animate-ping-slow" />
+                    <span className="absolute w-14 h-14 rounded-full border border-indigo-500/15 animate-ping-slow" style={{ animationDelay: "0.7s" }} />
+                  </>
+                )}
+                <div className={`relative w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                  dragOver ? "bg-indigo-500/20 border-2 border-indigo-400 scale-110" : "bg-indigo-500/8 border border-indigo-500/20"
+                }`}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                </div>
               </div>
               <p className="text-sm text-slate-300 font-medium">
                 Drop your image here, or <span className="text-indigo-400">browse</span>
@@ -247,48 +278,42 @@ export default function Dashboard() {
       {result && (
         <div className="w-full max-w-2xl mt-8 space-y-6 animate-slide-up">
           {/* Mood Card */}
-          <div className="glass-card rounded-2xl p-6 md:p-8">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Detected Mood</p>
-                <p className="text-3xl font-bold gradient-text">{result.mood}</p>
-              </div>
-              <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-indigo-500/20 to-violet-500/20 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-                  <line x1="9" y1="9" x2="9.01" y2="9" />
-                  <line x1="15" y1="9" x2="15.01" y2="9" />
-                </svg>
-              </div>
-            </div>
+          {(() => {
+            const ms = getMoodStyle(result.mood);
+            return (
+              <div className={`glass-card card-shine rounded-2xl p-6 md:p-8 border ${ms.border} bg-linear-to-br ${ms.bg}`}>
+                <div className="flex items-start justify-between mb-5">
+                  <div>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-[0.15em] mb-2">Detected Mood</p>
+                    <p className={`text-4xl font-black capitalize ${ms.text} leading-none`}>{result.mood}</p>
+                  </div>
+                  <MusicBars className={ms.text} />
+                </div>
 
-            {/* Labels */}
-            <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">AI Labels</p>
-              <div className="flex flex-wrap gap-2">
-                {result.labels?.map((label, idx) => (
-                  <span
-                    key={idx}
-                    className="label-badge px-3 py-1.5 rounded-lg text-xs font-medium text-indigo-200"
-                  >
-                    {label}
-                  </span>
-                ))}
+                {/* Labels */}
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-[0.15em] mb-3">AI Labels</p>
+                  <div className="flex flex-wrap gap-2">
+                    {result.labels?.map((label, idx) => (
+                      <span
+                        key={idx}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium ${ms.text} bg-white/5 border ${ms.border}`}
+                      >
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* Songs Card */}
-          <div className="glass-card rounded-2xl p-6 md:p-8">
+          <div className="glass-card card-shine rounded-2xl p-6 md:p-8">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-linear-to-br from-violet-500/20 to-pink-500/20 border border-violet-500/20 flex items-center justify-center">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 18V5l12-2v13" />
-                    <circle cx="6" cy="18" r="3" />
-                    <circle cx="18" cy="16" r="3" />
-                  </svg>
+                <div className="w-10 h-10 rounded-xl bg-violet-500/15 border border-violet-500/20 flex items-center justify-center">
+                  <MusicBars className="text-violet-400" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">Suggested Songs</p>
@@ -306,10 +331,10 @@ export default function Dashboard() {
                 {filteredSongs.map((song, idx) => (
                   <div
                     key={idx}
-                    className="song-item flex items-center justify-between bg-white/2 border border-white/6 rounded-xl px-4 py-3 animate-slide-up"
+                    className="song-item flex items-center justify-between bg-white/2 border border-white/6 rounded-xl px-4 py-3 animate-slide-up group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 rounded-lg bg-linear-to-br from-indigo-500/15 to-violet-500/15 border border-indigo-500/10 flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-lg bg-indigo-500/10 border border-indigo-500/15 flex items-center justify-center shrink-0 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-all duration-200">
                         <span className="text-xs font-bold text-indigo-300">{idx + 1}</span>
                       </div>
                       <div className="min-w-0">
@@ -322,14 +347,12 @@ export default function Dashboard() {
                         href={song.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="shrink-0 ml-3 px-3.5 py-1.5 rounded-lg bg-indigo-500/8 border border-indigo-500/20 text-indigo-300 text-xs font-medium hover:bg-indigo-500/15 hover:text-indigo-200 transition-all duration-200"
+                        className="shrink-0 ml-3 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-indigo-500/8 border border-indigo-500/20 text-indigo-300 text-xs font-medium hover:bg-indigo-500/18 hover:text-indigo-200 hover:scale-[1.03] transition-all duration-200"
                       >
-                        <span className="flex items-center gap-1.5">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polygon points="5 3 19 12 5 21 5 3" />
-                          </svg>
-                          Listen
-                        </span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                          <polygon points="5 3 19 12 5 21 5 3" />
+                        </svg>
+                        Listen
                       </a>
                     )}
                   </div>

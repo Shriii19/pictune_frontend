@@ -120,6 +120,160 @@ body {
 .animate-fade-in {
   animation: fade-in 0.4s ease-out both;
 }
+/* ── Music Waveform Bars ─────────────────────────────────── */
+.music-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.music-bars span {
+  display: block;
+  width: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  transform-origin: bottom;
+  animation: bar-dance 1.4s ease-in-out infinite;
+}
+
+.music-bars span:nth-child(1) { height: 8px;  animation-delay: 0s;    }
+.music-bars span:nth-child(2) { height: 14px; animation-delay: 0.2s;  }
+.music-bars span:nth-child(3) { height: 10px; animation-delay: 0.05s; }
+.music-bars span:nth-child(4) { height: 12px; animation-delay: 0.3s;  }
+.music-bars span:nth-child(5) { height: 6px;  animation-delay: 0.15s; }
+
+@keyframes bar-dance {
+  0%, 100% { transform: scaleY(0.25); opacity: 0.4; }
+  50%       { transform: scaleY(1);   opacity: 1;   }
+}
+
+/* ── Ping slow — pulsing rings ───────────────────────────── */
+@keyframes ping-slow {
+  0%        { transform: scale(1);   opacity: 0.5; }
+  75%, 100% { transform: scale(1.9); opacity: 0;   }
+}
+
+.animate-ping-slow {
+  animation: ping-slow 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* ── Scan line (mock demo card photo) ────────────────────── */
+@keyframes scan-line {
+  0%   { top: -2px; opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.9), rgba(168, 85, 247, 0.9), transparent);
+  animation: scan-line 3.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Floating music note particles ──────────────────────── */
+@keyframes particle-float {
+  0%   { opacity: 0; transform: translateY(0px) rotate(-5deg) scale(0.8); }
+  15%  { opacity: 0.7; transform: translateY(-10px) rotate(5deg) scale(1); }
+  85%  { opacity: 0.3; transform: translateY(-60px) rotate(15deg) scale(0.9); }
+  100% { opacity: 0; transform: translateY(-80px) rotate(20deg) scale(0.7); }
+}
+
+.animate-particle-float {
+  animation: particle-float 6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* ── Card shine — shimmer sweep on hover ─────────────────── */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    108deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.045) 50%,
+    transparent 62%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.55s ease;
+  pointer-events: none;
+}
+
+.card-shine:hover::after {
+  transform: translateX(100%);
+}
+
+/* ── Float slow — demo mock card ─────────────────────────── */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  40%       { transform: translateY(-12px) rotate(0.8deg); }
+  70%       { transform: translateY(-6px) rotate(-0.5deg); }
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+/* ── Morph — for background blobs ───────────────────────── */
+@keyframes morph {
+  0%, 100% { border-radius: 40% 60% 70% 30% / 40% 40% 60% 50%; }
+  34%       { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+  67%       { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
+}
+
+/* ── Neon pulse — CTA button ─────────────────────────────── */
+@keyframes neon-pulse {
+  0%, 100% { box-shadow: 0 0 14px rgba(99, 102, 241, 0.45), 0 4px 22px rgba(99, 102, 241, 0.28); }
+  50%       { box-shadow: 0 0 24px rgba(139, 92, 246, 0.65), 0 4px 32px rgba(139, 92, 246, 0.38); }
+}
+
+.animate-neon-pulse {
+  animation: neon-pulse 2.5s ease-in-out infinite;
+}
+
+/* ── Scroll reveal ───────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Subtle grid lines background ───────────────────────── */
+.grid-lines {
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ── Gradient border rotate ──────────────────────────────── */
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+.animate-gradient-x {
+  background-size: 200% auto;
+  animation: gradient-x 3.5s ease-in-out infinite;
+}
 
 .animate-shimmer {
   background-size: 200% 100%;

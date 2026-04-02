@@ -15,31 +15,40 @@
 }
 
 .bg-orb-1 {
-  width: 600px;
-  height: 600px;
-  top: -200px;
-  left: -150px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
-  animation: float 8s ease-in-out infinite;
+  width: 700px;
+  height: 700px;
+  top: -220px;
+  left: -180px;
+  background: radial-gradient(ellipse, rgba(99, 102, 241, 0.14) 0%, rgba(139, 92, 246, 0.06) 50%, transparent 70%);
+  animation: float 9s ease-in-out infinite, morph 18s ease-in-out infinite;
 }
 
 .bg-orb-2 {
-  width: 500px;
-  height: 500px;
-  bottom: -150px;
-  right: -100px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-  animation: float 10s ease-in-out infinite reverse;
+  width: 580px;
+  height: 580px;
+  bottom: -180px;
+  right: -120px;
+  background: radial-gradient(ellipse, rgba(168, 85, 247, 0.12) 0%, rgba(236, 72, 153, 0.05) 50%, transparent 70%);
+  animation: float 11s ease-in-out infinite reverse, morph 22s ease-in-out infinite reverse;
 }
 
 .bg-orb-3 {
-  width: 350px;
-  height: 350px;
-  top: 40%;
+  width: 400px;
+  height: 400px;
+  top: 38%;
   left: 50%;
   transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
-  animation: pulse-glow 6s ease-in-out infinite;
+  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.08) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 70%);
+  animation: pulse-glow 7s ease-in-out infinite, morph 16s ease-in-out infinite;
+}
+
+.bg-orb-4 {
+  width: 320px;
+  height: 320px;
+  top: 15%;
+  right: 8%;
+  background: radial-gradient(ellipse, rgba(236, 72, 153, 0.06) 0%, transparent 70%);
+  animation: float 13s ease-in-out infinite 2s, morph 20s ease-in-out infinite 5s;
 }
 
 /* ── Upload Drop Zone ────────────────────────────────────── */

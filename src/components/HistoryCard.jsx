@@ -1,13 +1,3 @@
-function getMoodAccent(mood) {
-  const m = (mood || "").toLowerCase();
-  if (m.includes("happy") || m.includes("joy"))      return "text-amber-300";
-  if (m.includes("sad")   || m.includes("depress"))  return "text-blue-300";
-  if (m.includes("energet") || m.includes("excit"))  return "text-orange-300";
-  if (m.includes("calm")  || m.includes("peace"))    return "text-teal-300";
-  if (m.includes("romantic") || m.includes("love"))  return "text-pink-300";
-  return "text-violet-300";
-}
-
 export default function HistoryCard({ item }) {
   const { mood, labels, songs, createdAt } = item;
   const date = new Date(createdAt).toLocaleDateString("en-US", {
@@ -21,31 +11,31 @@ export default function HistoryCard({ item }) {
   });
 
   return (
-    <div className="glass-card card-shine rounded-2xl p-6 flex flex-col h-full animate-slide-up group hover:-translate-y-1 transition-all duration-300">
+    <div className="bg-white border border-[#E5E5EA] p-6 flex flex-col h-full animate-slide-up group hover:border-[#111111] transition-all duration-300 shadow-sm">
       {/* Header */}
-      <div className="flex justify-between items-start mb-5">
+      <div className="flex justify-between items-start mb-6">
         <div>
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em] mb-1.5">
-            Mood
+          <p className="text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-1.5">
+            Primary Vibe
           </p>
-          <p className={`text-xl font-black capitalize ${getMoodAccent(mood)}`}>{mood}</p>
+          <p className="font-editorial text-2xl capitalize text-[#111111]">{mood}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs font-medium text-slate-400">{date}</p>
-          <p className="text-xs text-slate-600 mt-0.5">{time}</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#111111]">{date}</p>
+          <p className="text-[10px] text-[#888888] uppercase tracking-widest mt-0.5 font-bold">{time}</p>
         </div>
       </div>
 
       {/* Labels */}
-      <div className="mb-5">
-        <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em] mb-2.5">
-          Labels
+      <div className="mb-6">
+        <p className="text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-2.5">
+          Context Vectors
         </p>
         <div className="flex flex-wrap gap-1.5">
           {labels?.map((label, idx) => (
             <span
               key={idx}
-              className="label-badge px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-200/80"
+              className="px-2.5 py-1 border border-[#E5E5EA] text-[10px] font-bold uppercase tracking-wider text-[#666666] bg-[#FAFAFA]"
             >
               {label}
             </span>
@@ -54,25 +44,25 @@ export default function HistoryCard({ item }) {
       </div>
 
       {/* Songs */}
-      <div className="mt-auto pt-4 border-t border-white/4">
-        <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em] mb-2.5">
-          Songs
+      <div className="mt-auto pt-5 border-t border-[#E5E5EA]">
+        <p className="text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-3">
+          Curated Playlist
         </p>
         {songs?.length === 0 ? (
-          <p className="text-xs text-slate-600">No songs suggested.</p>
+          <p className="text-xs text-[#888888] font-bold uppercase tracking-widest">No tracks suggested.</p>
         ) : (
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {songs?.slice(0, 3).map((song, idx) => (
               <div
                 key={idx}
-                className="song-item flex justify-between items-center bg-white/2 border border-white/4 rounded-lg px-3 py-2 group/song"
+                className="flex justify-between items-center bg-[#FAFAFA] border border-[#E5E5EA] px-4 py-3 group-hover:border-[#111111] transition-colors"
               >
-                <div className="min-w-0 mr-2">
-                  <p className="font-medium text-sm text-white truncate">
+                <div className="min-w-0 mr-4">
+                  <p className="font-bold text-sm text-[#111111] truncate">
                     {song.title}
                   </p>
-                  <p className="text-xs text-slate-500 truncate">
-                    {song.artist} <span className="text-slate-700">•</span> {song.language}
+                  <p className="text-[10px] text-[#666666] truncate uppercase tracking-wider font-bold mt-0.5">
+                    {song.artist} <span className="text-[#E5E5EA] mx-1">•</span> {song.language}
                   </p>
                 </div>
                 {song.url && (
@@ -80,18 +70,16 @@ export default function HistoryCard({ item }) {
                     href={song.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="shrink-0 w-7 h-7 rounded-lg bg-indigo-500/8 border border-indigo-500/15 flex items-center justify-center text-indigo-400 hover:bg-indigo-500/20 hover:text-indigo-300 hover:scale-110 transition-all duration-200"
+                    className="btn-secondary text-[10px] py-1 px-2 shrink-0 ml-auto border-[#E5E5EA]"
                   >
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                      <polygon points="5 3 19 12 5 21 5 3" />
-                    </svg>
+                    Listen
                   </a>
                 )}
               </div>
             ))}
             {songs?.length > 3 && (
-              <p className="text-xs text-slate-600 text-center pt-1">
-                + {songs.length - 3} more
+              <p className="text-[10px] text-[#888888] text-center pt-2 font-bold uppercase tracking-widest">
+                + {songs.length - 3} additional tracks
               </p>
             )}
           </div>

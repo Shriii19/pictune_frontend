@@ -22,35 +22,31 @@ export default function History() {
   }, [token]);
 
   return (
-    <div className="relative min-h-[calc(100vh-64px)] flex flex-col items-center px-4 sm:px-6 py-10 md:py-14">
-      <div className="text-center mb-10 animate-slide-up max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-violet-500/8 border border-violet-500/20 text-violet-300 text-xs font-medium mb-5">
-          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
-          Your Activity
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-          Mood <span className="gradient-text">History</span>
+    <div className="min-h-[calc(100vh-64px)] flex flex-col items-center px-6 py-16 bg-[#FAFAFA] text-[#111111]">
+      <div className="text-center mb-12 animate-slide-up max-w-2xl">
+        <h1 className="font-editorial text-4xl sm:text-5xl md:text-6xl tracking-tight leading-tight">
+          Analysis Archive
         </h1>
-        <p className="text-slate-400 mt-3 text-base max-w-lg mx-auto">
-          Browse your previous mood detections and song recommendations.
+        <p className="text-[#666666] mt-4 text-sm uppercase tracking-widest font-bold">
+          Your historical mood vectors.
         </p>
       </div>
 
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-4xl">
         {loading ? (
           <div className="flex justify-center py-20">
-            <span className="w-8 h-8 border-2 border-white/20 border-t-indigo-400 rounded-full animate-spin" />
+            <span className="font-editorial text-xl animate-pulse">Loading Archive...</span>
           </div>
         ) : error ? (
-          <div className="glass-card rounded-2xl p-8 text-center">
-            <p className="text-red-400 text-sm">{error}</p>
+          <div className="bg-white border border-[#FF3B30] p-8 text-center">
+            <p className="text-[#FF3B30] text-sm font-bold uppercase tracking-widest">{error}</p>
           </div>
         ) : history.length === 0 ? (
-          <div className="glass-card rounded-2xl p-8 text-center">
-            <p className="text-slate-500 text-sm">No history yet. Upload a photo to get started!</p>
+          <div className="bg-white border border-[#E5E5EA] p-12 text-center shadow-sm">
+            <p className="text-[#888888] text-xs font-bold uppercase tracking-widest">No entries found. Upload an image to generate data.</p>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             {history.map((item, i) => (
               <HistoryCard key={i} item={item} />
             ))}

@@ -15,61 +15,26 @@ function App() {
 
   return (
     <Router>
-      <div className="noise-overlay min-h-screen bg-[#050510] text-slate-200 font-sans relative overflow-x-hidden">
-        {/* Animated Background Orbs */}
-        <div className="bg-orb bg-orb-1" />
-        <div className="bg-orb bg-orb-2" />
-        <div className="bg-orb bg-orb-3" />
-        <div className="bg-orb bg-orb-4" />
-
+      <div className="noise-overlay min-h-screen bg-[#FAFAFA] text-[#111111] font-sans relative overflow-x-hidden">
         {/* App Content */}
         <div className="relative z-10 flex flex-col min-h-screen">
           <Navbar />
           <main className="flex-1">
             <Routes>
-              <Route
-                path="/"
-                element={
-                  isAuthenticated ? <Navigate to="/dashboard" replace /> : <Home />
-                }
-              />
-              <Route
-                path="/login"
-                element={
-                  isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
-                }
-              />
-              <Route
-                path="/register"
-                element={
-                  isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/history" 
-                element={
-                  <ProtectedRoute>
-                    <History />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Home />} />
+              <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
+              <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
               <Route path="/about" element={<About />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
 
           {/* Footer */}
-          <footer className="relative z-10 border-t border-white/4 py-6 text-center">
-            <p className="text-xs text-slate-600">
-              &copy; {new Date().getFullYear()} PicTune &mdash; AI Mood Music. Built with care.
+          <footer className="relative z-10 py-8 text-center border-t border-[#E5E5EA] mt-12">
+            <p className="text-xs text-[#888888] tracking-widest uppercase font-bold">
+              &copy; {new Date().getFullYear()} PicTune &mdash; Editorial Edition.
             </p>
           </footer>
         </div>

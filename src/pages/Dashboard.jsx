@@ -12,17 +12,6 @@ function MusicBars({ className = "" }) {
   );
 }
 
-/* ── Mood-specific colour ────────────────────────────────── */
-function getMoodStyle(mood) {
-  const m = (mood || "").toLowerCase();
-  if (m.includes("happy") || m.includes("joy"))       return { text: "text-amber-300",  border: "border-amber-500/25",  bg: "from-amber-500/10 to-yellow-500/5" };
-  if (m.includes("sad")   || m.includes("depress"))   return { text: "text-blue-300",   border: "border-blue-500/25",   bg: "from-blue-500/10 to-cyan-500/5" };
-  if (m.includes("energet") || m.includes("excit"))   return { text: "text-orange-300", border: "border-orange-500/25", bg: "from-orange-500/10 to-red-500/5" };
-  if (m.includes("calm")  || m.includes("peace"))     return { text: "text-teal-300",   border: "border-teal-500/25",   bg: "from-teal-500/10 to-green-500/5" };
-  if (m.includes("romantic") || m.includes("love"))   return { text: "text-pink-300",   border: "border-pink-500/25",   bg: "from-pink-500/10 to-rose-500/5" };
-  return { text: "text-violet-300", border: "border-violet-500/25", bg: "from-violet-500/10 to-indigo-500/5" };
-}
-
 export default function Dashboard() {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -73,7 +62,7 @@ export default function Dashboard() {
     if (!photo) return;
 
     if (!token && guestCount >= 3) {
-      alert("Please signup to continue \uD83C\uDFB5");
+      alert("Please signup to continue");
       navigate("/login");
       return;
     }
@@ -116,86 +105,65 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-64px)] flex flex-col items-center px-4 sm:px-6 py-10 md:py-14">
+    <div className="min-h-[calc(100vh-64px)] flex flex-col items-center px-6 py-16 bg-[#FAFAFA] text-[#111111]">
       {/* Page Header */}
-      <div className="text-center mb-10 animate-slide-up max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/8 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-5">
-          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-          AI-Powered Mood Detection
-        </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
-          Upload a photo,<br />
-          <span className="gradient-text">discover the mood</span>
+      <div className="text-center mb-12 animate-slide-up max-w-2xl">
+        <h1 className="font-editorial text-4xl sm:text-5xl md:text-6xl tracking-tight leading-tight">
+          Analysis Studio
         </h1>
-        <p className="text-slate-400 mt-4 text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
-          Let AI analyze your photo&apos;s mood and recommend the perfect songs to match the vibe.
+        <p className="text-[#666666] mt-4 text-sm uppercase tracking-widest font-bold">
+          Upload. Analyze. Listen.
         </p>
       </div>
 
       {/* Main Card */}
-      <div className="w-full max-w-2xl glass-card rounded-2xl p-6 md:p-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+      <div className="w-full max-w-2xl bg-white border border-[#E5E5EA] p-8 animate-slide-up shadow-sm">
         {/* Upload Zone */}
         <div
           onClick={() => fileInputRef.current?.click()}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          className={`drop-zone relative flex flex-col items-center justify-center w-full rounded-xl cursor-pointer border-2 border-dashed transition-all duration-300 ${
+          className={`drop-zone relative flex flex-col items-center justify-center w-full cursor-pointer border border-[#E5E5EA] transition-all duration-300 ${
             dragOver
-              ? "border-indigo-400 bg-indigo-500/6"
+              ? "bg-[#F2F2F7] border-[#111111]"
               : preview
               ? "border-transparent bg-transparent p-0"
-              : "border-white/8 bg-white/2 hover:border-indigo-500/30 hover:bg-white/4"
-          } ${!preview ? "h-48 md:h-56" : ""}`}
+              : "bg-[#FAFAFA] hover:border-[#111111]"
+          } ${!preview ? "h-64" : ""}`}
         >
           {preview ? (
             <div className="relative w-full group">
-              <div className="overflow-hidden rounded-xl">
+              <div className="overflow-hidden bg-[#F2F2F7] border border-[#E5E5EA]">
                 <img
                   src={preview}
                   alt="Preview"
-                  className="w-full max-h-72 object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                  className="w-full max-h-96 object-contain"
                 />
               </div>
-              {/* Overlay on hover */}
-              <div className="absolute inset-0 rounded-xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <div className="absolute inset-0 bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
                 <button
                   onClick={(e) => { e.stopPropagation(); clearPhoto(); }}
-                  className="px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-colors"
+                  className="btn-primary text-xs"
                 >
-                  Remove & Upload New
+                  Remove Image
                 </button>
-              </div>
-              {/* File name badge */}
-              <div className="absolute bottom-3 left-3 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm text-xs text-white/80 font-medium">
-                {photo?.name}
               </div>
             </div>
           ) : (
             <div className="flex flex-col items-center text-center px-4">
-              {/* Upload icon with pulsing rings */}
-              <div className="relative w-20 h-20 flex items-center justify-center mb-5">
-                {!dragOver && (
-                  <>
-                    <span className="absolute w-20 h-20 rounded-full border border-indigo-500/20 animate-ping-slow" />
-                    <span className="absolute w-14 h-14 rounded-full border border-indigo-500/15 animate-ping-slow" style={{ animationDelay: "0.7s" }} />
-                  </>
-                )}
-                <div className={`relative w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 ${
-                  dragOver ? "bg-indigo-500/20 border-2 border-indigo-400 scale-110" : "bg-indigo-500/8 border border-indigo-500/20"
-                }`}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="17 8 12 3 7 8" />
-                    <line x1="12" y1="3" x2="12" y2="15" />
-                  </svg>
-                </div>
+              <div className="mb-4">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
               </div>
-              <p className="text-sm text-slate-300 font-medium">
-                Drop your image here, or <span className="text-indigo-400">browse</span>
+              <p className="text-sm font-bold uppercase tracking-widest text-[#111111]">
+                Select Image
               </p>
-              <p className="text-xs text-slate-500 mt-1.5">
-                Supports PNG, JPG, JPEG up to 10MB
+              <p className="text-xs text-[#888888] mt-2 font-medium uppercase tracking-wider">
+                JPG, PNG. Max 10MB.
               </p>
             </div>
           )}
@@ -209,23 +177,23 @@ export default function Dashboard() {
         </div>
 
         {/* Language Filter */}
-        <div className="mt-6">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
-            Song Language
+        <div className="mt-8 border-t border-[#E5E5EA] pt-6">
+          <p className="text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-3">
+            Target Language
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             {[
-              { key: "all", label: "All Languages" },
+              { key: "all", label: "Global" },
               { key: "hindi", label: "Hindi" },
               { key: "english", label: "English" },
             ].map((opt) => (
               <button
                 key={opt.key}
                 onClick={() => setLanguageFilter(opt.key)}
-                className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
                   languageFilter === opt.key
-                    ? "bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 shadow-lg shadow-indigo-500/10"
-                    : "bg-white/3 border border-white/6 text-slate-400 hover:bg-white/6 hover:text-slate-300"
+                    ? "bg-[#111111] border-[#111111] text-[#FAFAFA]"
+                    : "bg-[#FAFAFA] border-[#E5E5EA] text-[#666666] hover:border-[#111111] hover:text-[#111111]"
                 }`}
               >
                 {opt.label}
@@ -237,39 +205,24 @@ export default function Dashboard() {
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
-          className={`gradient-btn mt-6 w-full py-3.5 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
-            !photo ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className="btn-primary mt-6 w-full py-4 text-sm"
           disabled={loading || !photo}
         >
-          {loading ? (
-            <span className="flex items-center justify-center gap-2.5">
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Analyzing your photo...
-            </span>
-          ) : (
-            <span className="flex items-center justify-center gap-2">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-              Detect Mood
-            </span>
-          )}
+          {loading ? "Processing Analysis..." : "Execute Detection"}
         </button>
       </div>
 
       {/* Guest limit warning */}
       {!token && guestCount >= 3 && (
-        <div className="w-full max-w-2xl mt-6 glass-card rounded-2xl p-5 border border-red-500/20 text-center animate-slide-up">
-          <p className="text-red-400 text-sm font-medium">
-            You&apos;ve used all 3 free tries. Sign up to continue using PicTune! 🚀
+        <div className="w-full max-w-2xl mt-6 bg-[#FAFAFA] border border-[#111111] p-5 text-center">
+          <p className="text-[#111111] text-sm font-bold uppercase tracking-widest">
+            Limit Reached. Registration Required.
           </p>
           <button
             onClick={() => navigate("/register")}
-            className="gradient-btn mt-3 px-6 py-2 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/20"
+            className="btn-primary mt-4 text-xs"
           >
-            Sign Up Free
+            Create Account
           </button>
         </div>
       )}
@@ -278,68 +231,57 @@ export default function Dashboard() {
       {result && (
         <div className="w-full max-w-2xl mt-8 space-y-6 animate-slide-up">
           {/* Mood Card */}
-          {(() => {
-            const ms = getMoodStyle(result.mood);
-            return (
-              <div className={`glass-card card-shine rounded-2xl p-6 md:p-8 border ${ms.border} bg-linear-to-br ${ms.bg}`}>
-                <div className="flex items-start justify-between mb-5">
-                  <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-[0.15em] mb-2">Detected Mood</p>
-                    <p className={`text-4xl font-black capitalize ${ms.text} leading-none`}>{result.mood}</p>
-                  </div>
-                  <MusicBars className={ms.text} />
-                </div>
-
-                {/* Labels */}
-                <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-[0.15em] mb-3">AI Labels</p>
-                  <div className="flex flex-wrap gap-2">
-                    {result.labels?.map((label, idx) => (
-                      <span
-                        key={idx}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium ${ms.text} bg-white/5 border ${ms.border}`}
-                      >
-                        {label}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+          <div className="bg-[#111111] text-[#FAFAFA] p-8 border border-[#111111]">
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <p className="text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-2">Primary Vibe</p>
+                <p className="font-editorial text-4xl capitalize tracking-tight">{result.mood}</p>
               </div>
-            );
-          })()}
+              <MusicBars className="text-[#FAFAFA]" />
+            </div>
+
+            <div>
+              <p className="text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-3">Context Vectors</p>
+              <div className="flex flex-wrap gap-2">
+                {result.labels?.map((label, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider border border-[#333333] text-[#CCCCCC]"
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
 
           {/* Songs Card */}
-          <div className="glass-card card-shine rounded-2xl p-6 md:p-8">
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-violet-500/15 border border-violet-500/20 flex items-center justify-center">
-                  <MusicBars className="text-violet-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">Suggested Songs</p>
-                  <p className="text-xs text-slate-500">{filteredSongs.length} tracks found</p>
-                </div>
+          <div className="bg-white border border-[#E5E5EA] p-8">
+            <div className="flex items-center justify-between mb-6 border-b border-[#E5E5EA] pb-4">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-widest text-[#111111]">Curated Playlist</p>
+                <p className="text-[10px] text-[#888888] uppercase tracking-wider mt-1">{filteredSongs.length} matches found</p>
               </div>
             </div>
 
             {filteredSongs.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-sm text-slate-500">No songs for this language filter. Try &quot;All Languages&quot;.</p>
+                <p className="text-xs font-bold text-[#888888] uppercase tracking-widest">No tracks available in selected language.</p>
               </div>
             ) : (
-              <div className="space-y-2 stagger-children">
+              <div className="space-y-3">
                 {filteredSongs.map((song, idx) => (
                   <div
                     key={idx}
-                    className="song-item flex items-center justify-between bg-white/2 border border-white/6 rounded-xl px-4 py-3 animate-slide-up group"
+                    className="flex items-center justify-between bg-[#FAFAFA] border border-[#E5E5EA] p-4 hover:border-[#111111] transition-colors group"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 rounded-lg bg-indigo-500/10 border border-indigo-500/15 flex items-center justify-center shrink-0 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-all duration-200">
-                        <span className="text-xs font-bold text-indigo-300">{idx + 1}</span>
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="w-8 h-8 flex items-center justify-center font-editorial text-[#888888] group-hover:text-[#111111] transition-colors shrink-0">
+                        0{idx + 1}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-semibold text-sm text-white truncate">{song.title}</p>
-                        <p className="text-xs text-slate-400 truncate">{song.artist} <span className="text-slate-600">•</span> {song.language}</p>
+                        <p className="font-bold text-sm text-[#111111] truncate">{song.title}</p>
+                        <p className="text-xs text-[#666666] truncate mt-0.5">{song.artist} • <span className="uppercase text-[10px] tracking-wider font-bold">{song.language}</span></p>
                       </div>
                     </div>
                     {song.url && (
@@ -347,11 +289,8 @@ export default function Dashboard() {
                         href={song.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="shrink-0 ml-3 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-indigo-500/8 border border-indigo-500/20 text-indigo-300 text-xs font-medium hover:bg-indigo-500/18 hover:text-indigo-200 hover:scale-[1.03] transition-all duration-200"
+                        className="btn-secondary text-[10px] py-1.5 px-3 shrink-0 ml-4 border-[#E5E5EA] hover:border-[#111111]"
                       >
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                          <polygon points="5 3 19 12 5 21 5 3" />
-                        </svg>
                         Listen
                       </a>
                     )}

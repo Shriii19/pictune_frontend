@@ -1,4 +1,4 @@
-const BASE_URL = "https://pictune-backend.vercel.app/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
@@ -23,7 +23,7 @@ export const login = async (email, password) => {
     throw new Error(data.error || "Login failed");
   }
 
-  return data;
+  return data.data;
 };
 
 export const register = async (email, password) => {
@@ -39,7 +39,7 @@ export const register = async (email, password) => {
     throw new Error(data.error || "Register failed");
   }
 
-  return data;
+  return data.data;
 };
 
 export const verifyOtp = async (email, otp) => {

@@ -16,178 +16,42 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="glass-strong sticky top-0 z-50 border-b border-white/6">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="sticky top-0 z-50 bg-[#FAFAFA]/90 backdrop-blur-md border-b border-[#E5E5EA]">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link
-            to={isAuthenticated ? "/dashboard" : "/"}
-            className="flex items-center gap-2.5 group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/45 group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 18V5l12-2v13" />
-                <circle cx="6" cy="18" r="3" />
-                <circle cx="18" cy="16" r="3" />
-              </svg>
+          <Link to={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3 group">
+            <div className="w-8 h-8 bg-[#111111] flex items-center justify-center text-[#FAFAFA] font-serif italic font-bold text-xl leading-none pt-1">
+              P
             </div>
-            <span className="text-lg font-bold tracking-tight text-white">
-              Pic<span className="gradient-text">Tune</span>
+            <span className="text-lg font-bold tracking-tight text-[#111111] uppercase">
+              PicTune
             </span>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-8">
             {isAuthenticated ? (
               <>
                 <Link
                   to="/dashboard"
-                  className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive("/dashboard")
-                      ? "text-white bg-indigo-500/15 border border-indigo-500/25"
-                      : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="7" height="7" rx="1" />
-                      <rect x="14" y="3" width="7" height="7" rx="1" />
-                      <rect x="3" y="14" width="7" height="7" rx="1" />
-                      <rect x="14" y="14" width="7" height="7" rx="1" />
-                    </svg>
-                    Dashboard
-                  </span>
-                </Link>
-                <Link
-                  to="/about"
-                  className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive("/about")
-                      ? "text-white bg-violet-500/15 border border-violet-500/25"
-                      : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                      <path d="M2 17l10 5 10-5" />
-                      <path d="M2 12l10 5 10-5" />
-                    </svg>
-                    Our Mission
-                  </span>
-                </Link>
-                <Link
-                  to="/history"
-                  className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive("/history")
-                      ? "text-white bg-violet-500/15 border border-violet-500/25"
-                      : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                    History
-                  </span>
-                </Link>
-                <div className="w-px h-6 bg-white/8 mx-2" />
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/8 border border-transparent hover:border-red-500/20 transition-all duration-200"
-                >
-                  <span className="flex items-center gap-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                      <polyline points="16 17 21 12 16 7" />
-                      <line x1="21" y1="12" x2="9" y2="12" />
-                    </svg>
-                    Logout
-                  </span>
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-200"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/about"
-                  className={`animated-underline px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive("/about")
-                      ? "text-white bg-white/8"
-                      : "text-slate-400 hover:text-white hover:bg-white/4"
-                  }`}
-                >
-                  Our Mission
-                </Link>
-                <Link
-                  to="/register"
-                  className="gradient-btn px-5 py-2 rounded-lg text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/35 hover:scale-[1.03] transition-all duration-200"
-                >
-                  Get Started
-                </Link>
-              </>
-            )}
-          </div>
-
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/6 transition-colors"
-          >
-            {mobileOpen ? (
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            ) : (
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="4" y1="8" x2="20" y2="8" />
-                <line x1="4" y1="16" x2="20" y2="16" />
-              </svg>
-            )}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {mobileOpen && (
-          <div className="md:hidden pb-4 pt-2 space-y-1 animate-slide-down border-t border-white/6">
-            {isAuthenticated ? (
-              <>
-                <Link
-                  to="/dashboard"
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    isActive("/dashboard") ? "text-white bg-white/8" : "text-slate-400 hover:text-white"
+                  className={`text-xs font-bold transition-all duration-200 uppercase tracking-widest ${
+                    isActive("/dashboard") ? "text-[#111111] border-b-2 border-[#111111] pb-1" : "text-[#888888] hover:text-[#111111]"
                   }`}
                 >
                   Dashboard
                 </Link>
                 <Link
-                  to="/about"
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    isActive("/about") ? "text-white bg-white/8" : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  our mission
-                </Link>
-                <Link
                   to="/history"
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    isActive("/history") ? "text-white bg-white/8" : "text-slate-400 hover:text-white"
+                  className={`text-xs font-bold transition-all duration-200 uppercase tracking-widest ${
+                    isActive("/history") ? "text-[#111111] border-b-2 border-[#111111] pb-1" : "text-[#888888] hover:text-[#111111]"
                   }`}
                 >
                   History
                 </Link>
                 <button
-                  onClick={() => { setMobileOpen(false); handleLogout(); }}
-                  className="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/8 transition-colors"
+                  onClick={handleLogout}
+                  className="text-xs font-bold text-[#888888] hover:text-[#FF3B30] transition-colors uppercase tracking-widest"
                 >
                   Logout
                 </button>
@@ -195,28 +59,57 @@ export default function Navbar() {
             ) : (
               <>
                 <Link
+                  to="/about"
+                  className={`text-xs font-bold transition-all duration-200 uppercase tracking-widest ${
+                    isActive("/about") ? "text-[#111111]" : "text-[#888888] hover:text-[#111111]"
+                  }`}
+                >
+                  The Process
+                </Link>
+                <Link
                   to="/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="block px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                  className="text-xs font-bold text-[#888888] hover:text-[#111111] transition-colors uppercase tracking-widest"
                 >
                   Sign In
                 </Link>
-                <Link
-                  to="/about"
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    isActive("/about") ? "text-white bg-white/8" : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  our mission
+                <Link to="/register" className="btn-primary text-xs tracking-widest uppercase">
+                  Start
                 </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setMobileOpen(false)}
-                  className="block px-4 py-2.5 rounded-lg text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
-                >
-                  Get Started
-                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile hamburger */}
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 text-[#111111]">
+            {mobileOpen ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileOpen && (
+          <div className="md:hidden py-6 border-t border-[#E5E5EA] flex flex-col gap-6">
+            {isAuthenticated ? (
+              <>
+                <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-[#111111]">Dashboard</Link>
+                <Link to="/history" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-[#111111]">History</Link>
+                <button onClick={() => { setMobileOpen(false); handleLogout(); }} className="text-xl font-editorial tracking-tight text-[#FF3B30] text-left">Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/about" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-[#111111]">The Process</Link>
+                <Link to="/login" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-[#111111]">Sign In</Link>
+                <Link to="/register" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-[#111111]">Start Discovery</Link>
               </>
             )}
           </div>

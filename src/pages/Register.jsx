@@ -32,14 +32,8 @@ export default function Register() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-12">
-      {/* Decorative Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-violet-600/[0.06] rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-indigo-600/[0.06] rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative z-10">
+    <div className="relative min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-12 bg-[#FAFAFA]">
+      <div className="relative z-10 w-full flex justify-center">
         <AuthForm
           type="register"
           onSubmit={handleRegister}

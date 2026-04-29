@@ -25,14 +25,8 @@ export default function Login() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-12">
-      {/* Decorative Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/[0.06] rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-violet-600/[0.06]  rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative z-10 flex flex-col items-center">
+    <div className="relative min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-12 bg-[#FAFAFA]">
+      <div className="relative z-10 flex flex-col items-center w-full">
         <AuthForm
           type="login"
           onSubmit={handleLogin}
@@ -40,11 +34,9 @@ export default function Login() {
           loading={loading}
         />
 
-        {/* Mini about tagline */}
-        <div className="mt-10 max-w-sm text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
-          <p className="text-xs text-slate-600 leading-relaxed">
-            <span className="gradient-text font-semibold">PicTune</span> uses AI to detect the mood in your photos and recommend songs that match.
-            Upload a photo, discover the vibe.
+        <div className="mt-12 max-w-sm text-center animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <p className="text-[10px] text-[#888888] uppercase tracking-widest font-bold leading-relaxed">
+            <span className="text-[#111111]">PicTune</span> decodes the emotional atmosphere of your photography and matches it with sound.
           </p>
         </div>
       </div>

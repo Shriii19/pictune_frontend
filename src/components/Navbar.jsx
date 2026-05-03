@@ -16,15 +16,15 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#FAFAFA]/90 backdrop-blur-md border-b border-[#E5E5EA]">
+    <nav className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-white/10 shadow-lg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3 group">
-            <div className="w-8 h-8 bg-[#111111] flex items-center justify-center text-[#FAFAFA] font-serif italic font-bold text-xl leading-none pt-1">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-serif italic font-bold text-xl leading-none pt-1 shadow-lg shadow-purple-500/30">
               P
             </div>
-            <span className="text-lg font-bold tracking-tight text-[#111111] uppercase">
+            <span className="text-lg font-bold tracking-tight text-white uppercase group-hover:text-purple-300 transition-colors">
               PicTune
             </span>
           </Link>
@@ -36,7 +36,7 @@ export default function Navbar() {
                 <Link
                   to="/dashboard"
                   className={`text-xs font-bold transition-all duration-200 uppercase tracking-widest ${
-                    isActive("/dashboard") ? "text-[#111111] border-b-2 border-[#111111] pb-1" : "text-[#888888] hover:text-[#111111]"
+                    isActive("/dashboard") ? "text-purple-400 border-b-2 border-purple-400 pb-1" : "text-slate-400 hover:text-purple-300"
                   }`}
                 >
                   Dashboard
@@ -44,14 +44,14 @@ export default function Navbar() {
                 <Link
                   to="/history"
                   className={`text-xs font-bold transition-all duration-200 uppercase tracking-widest ${
-                    isActive("/history") ? "text-[#111111] border-b-2 border-[#111111] pb-1" : "text-[#888888] hover:text-[#111111]"
+                    isActive("/history") ? "text-purple-400 border-b-2 border-purple-400 pb-1" : "text-slate-400 hover:text-purple-300"
                   }`}
                 >
                   History
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="text-xs font-bold text-[#888888] hover:text-[#FF3B30] transition-colors uppercase tracking-widest"
+                  className="text-xs font-bold text-slate-400 hover:text-pink-400 transition-colors uppercase tracking-widest"
                 >
                   Logout
                 </button>
@@ -61,14 +61,14 @@ export default function Navbar() {
                 <Link
                   to="/about"
                   className={`text-xs font-bold transition-all duration-200 uppercase tracking-widest ${
-                    isActive("/about") ? "text-[#111111]" : "text-[#888888] hover:text-[#111111]"
+                    isActive("/about") ? "text-white" : "text-slate-400 hover:text-white"
                   }`}
                 >
                   The Process
                 </Link>
                 <Link
                   to="/login"
-                  className="text-xs font-bold text-[#888888] hover:text-[#111111] transition-colors uppercase tracking-widest"
+                  className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-widest"
                 >
                   Sign In
                 </Link>
@@ -80,7 +80,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile hamburger */}
-          <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 text-[#111111]">
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 text-white">
             {mobileOpen ? (
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18" />
@@ -98,18 +98,18 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="md:hidden py-6 border-t border-[#E5E5EA] flex flex-col gap-6">
+          <div className="md:hidden py-6 border-t border-white/10 flex flex-col gap-6">
             {isAuthenticated ? (
               <>
-                <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-[#111111]">Dashboard</Link>
-                <Link to="/history" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-[#111111]">History</Link>
-                <button onClick={() => { setMobileOpen(false); handleLogout(); }} className="text-xl font-editorial tracking-tight text-[#FF3B30] text-left">Logout</button>
+                <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-white">Dashboard</Link>
+                <Link to="/history" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-white">History</Link>
+                <button onClick={() => { setMobileOpen(false); handleLogout(); }} className="text-xl font-editorial tracking-tight text-pink-400 text-left">Logout</button>
               </>
             ) : (
               <>
-                <Link to="/about" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-[#111111]">The Process</Link>
-                <Link to="/login" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-[#111111]">Sign In</Link>
-                <Link to="/register" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-[#111111]">Start Discovery</Link>
+                <Link to="/about" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-white">The Process</Link>
+                <Link to="/login" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-white">Sign In</Link>
+                <Link to="/register" onClick={() => setMobileOpen(false)} className="text-xl font-editorial tracking-tight text-purple-400">Start Discovery</Link>
               </>
             )}
           </div>

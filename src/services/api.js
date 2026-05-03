@@ -77,7 +77,7 @@ export const uploadPhoto = async (formData) => {
     throw new Error(data.error || "Upload failed");
   }
 
-  return data;
+  return data.data || data;
 };
 
 export const getHistory = async () => {

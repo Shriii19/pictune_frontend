@@ -15,7 +15,7 @@ function App() {
 
   return (
     <Router>
-      <div className="noise-overlay min-h-screen bg-[#FAFAFA] text-[#111111] font-sans relative overflow-x-hidden">
+      <div className="noise-overlay min-h-screen bg-[#0f172a] text-slate-200 font-sans relative overflow-x-hidden">
         {/* App Content */}
         <div className="relative z-10 flex flex-col min-h-screen">
           <Navbar />
@@ -32,9 +32,9 @@ function App() {
           </main>
 
           {/* Footer */}
-          <footer className="relative z-10 py-8 text-center border-t border-[#E5E5EA] mt-12">
-            <p className="text-xs text-[#888888] tracking-widest uppercase font-bold">
-              &copy; {new Date().getFullYear()} PicTune &mdash; Editorial Edition.
+          <footer className="relative z-10 py-8 text-center border-t border-white/10 mt-12 bg-slate-900/50 backdrop-blur-md">
+            <p className="text-xs text-purple-300 tracking-widest uppercase font-bold">
+              &copy; {new Date().getFullYear()} PicTune &mdash; AI Mood Music.
             </p>
           </footer>
         </div>

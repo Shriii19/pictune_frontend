@@ -93,7 +93,10 @@ export default function Register() {
                   required
                   maxLength="6"
                   value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "");
+                    setOtp(val);
+                  }}
                   className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5EA] text-[#111111] text-sm focus:outline-none focus:border-[#111111] text-center tracking-[0.5em] transition-colors"
                   placeholder="000000"
                 />

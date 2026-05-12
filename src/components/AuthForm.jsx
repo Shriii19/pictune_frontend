@@ -6,6 +6,8 @@ export default function AuthForm({ type, onSubmit, error, loading }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState("");
+  const [phone, setPhone] = useState("");
 
   const isRegister = type === "register";
 
@@ -15,7 +17,7 @@ export default function AuthForm({ type, onSubmit, error, loading }) {
       onSubmit(null, "Passwords do not match");
       return;
     }
-    onSubmit({ email, password });
+    onSubmit({ email, password, username, phone });
   };
 
   return (
@@ -41,6 +43,38 @@ export default function AuthForm({ type, onSubmit, error, loading }) {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
+        {isRegister && (
+          <div>
+            <label className="block text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-2">
+              Username
+            </label>
+            <input
+              type="text"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5EA] text-[#111111] text-sm focus:outline-none focus:border-[#111111] transition-colors"
+              placeholder="johndoe"
+            />
+          </div>
+        )}
+
+        {isRegister && (
+          <div>
+            <label className="block text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-2">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5EA] text-[#111111] text-sm focus:outline-none focus:border-[#111111] transition-colors"
+              placeholder="+1234567890"
+            />
+          </div>
+        )}
+
         <div>
           <label className="block text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-2">
             Email Address

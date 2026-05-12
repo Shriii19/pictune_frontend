@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 
 export default function AuthForm({ type, onSubmit, error, loading }) {
   const [email, setEmail] = useState("");
@@ -144,8 +145,16 @@ export default function AuthForm({ type, onSubmit, error, loading }) {
 
         <button
           type="button"
-          onClick={() => {
-            alert("To implement Google Login, you need to configure Supabase Auth (Providers > Google) and connect it here.");
+          onClick={async () => {
+            const { error } = await supabase.auth.signInWithOAuth({
+              provider: 'google',
+              options: {
+                redirectTo: `${window.location.origin}/auth/callback`,
+              },
+            });
+            if (error) {
+              console.error("Error logging in with Google:", error.message);
+            }
           }}
           className="w-full py-4 bg-white border border-[#E5E5EA] text-[#111111] text-sm font-bold uppercase tracking-widest hover:bg-[#FAFAFA] transition-colors flex items-center justify-center gap-3"
         >

@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import History from "./pages/History";
 import Home from "./pages/Home";
 import About from "./pages/About";
+import AuthCallback from "./pages/AuthCallback";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./hooks/useAuth.jsx";
 import "./App.css";
@@ -27,6 +28,7 @@ function App() {
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
               <Route path="/about" element={<About />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

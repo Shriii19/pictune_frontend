@@ -26,11 +26,11 @@ export const login = async (email, password) => {
   return data.data;
 };
 
-export const register = async (email, password) => {
+export const register = async (email, password, username, phone) => {
   const res = await fetch(`${BASE_URL}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, username, phone }),
   });
 
   const data = await res.json();

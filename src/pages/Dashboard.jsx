@@ -26,12 +26,7 @@ export default function Dashboard() {
     Number(localStorage.getItem("guest_count")) || 0
   );
 
-  useEffect(() => {
-    const saved = localStorage.getItem("last_result");
-    if (saved) {
-      try { setResult(JSON.parse(saved)); } catch { /* ignore */ }
-    }
-  }, []);
+
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -76,7 +71,6 @@ export default function Dashboard() {
     try {
       const data = await uploadPhoto(formData);
       setResult(data);
-      localStorage.setItem("last_result", JSON.stringify(data));
 
       if (!token) {
         const newCount = guestCount + 1;

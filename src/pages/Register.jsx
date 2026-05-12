@@ -22,7 +22,7 @@ export default function Register() {
     setLoading(true);
     setError("");
     try {
-      const data = await register(credentials.email, credentials.password);
+      const data = await register(credentials.email, credentials.password, credentials.username, credentials.phone);
       if (data.requiresVerification) {
         setRegisteredEmail(data.email || credentials.email);
         setStep("otp");

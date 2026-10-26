@@ -24,5 +24,5 @@ export default function Login() {
     } catch (err) { setError(err.message); }
     finally { setLoading(false); }
   }
-  return <div className="auth-page page-enter"><div className="auth-story"><div className="eyebrow">YOUR MOMENTS HAVE A HOME</div><h1>A familiar feeling.<br/><em>A fresh soundtrack.</em></h1><p>Come back to the music that feels like you. Your next favorite moment is just a photo away.</p><img className="auth-story-image" src={collections[0].image} alt="A warm and quiet landscape"/></div><AuthForm type="login" onSubmit={handleLogin} error={error} loading={loading}/></div>;
+  return <div className="auth-page"><div className="auth-story"><h1>Welcome back.</h1><p>Sign in to PicTune. You can also use the studio without an account during this preview.</p><img className="auth-story-image" src={collections[0].image} alt="A warm and quiet landscape"/></div><AuthForm type="login" onSubmit={handleLogin} error={error} loading={loading}/></div>;
 }

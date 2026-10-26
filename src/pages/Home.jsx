@@ -1,108 +1,126 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import Icon from "../components/Icon";
+import Playlist from "../components/Playlist";
+import { collections, moods, createPlaylist } from "../data/collections";
+
+const MAX_SIZE = 10 * 1024 * 1024;
+
+function readImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("This photo couldn’t be opened. Please try another file."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("This image couldn’t be read. Try a JPG, PNG, or WebP file."));
+      img.onload = () => {
+        const scale = Math.min(1, 900 / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.75));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function Home() {
-  return (
-    <div className="relative overflow-hidden bg-transparent text-slate-200">
-      {/* Background glow effects to dissolve and mix */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/20 blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-pink-600/20 blur-[120px] pointer-events-none"></div>
+  const inputRef = useRef(null);
+  const timerRef = useRef(null);
+  const uploadRef = useRef(0);
+  const [selected, setSelected] = useState(null);
+  const [mood, setMood] = useState("dreamy");
+  const [language, setLanguage] = useState("all");
+  const [dragging, setDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [reading, setReading] = useState(false);
+  const [error, setError] = useState("");
+  const [playlist, setPlaylist] = useState(() => createPlaylist(collections[0], "dreamy"));
+  const [generated, setGenerated] = useState(false);
 
-      <div className="relative max-w-7xl mx-auto px-6 py-24 sm:py-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        
-        {/* Left Side: Typography heavy */}
-        <div className="max-w-2xl animate-slide-up relative z-10">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="h-[2px] w-12 bg-gradient-to-r from-purple-500 to-pink-500"></div>
-            <span className="text-xs font-bold tracking-[0.2em] uppercase text-purple-300">
-              Acoustic Vision
-            </span>
-          </div>
+  useEffect(() => () => { clearTimeout(timerRef.current); uploadRef.current += 1; }, []);
 
-          <h1 className="font-editorial text-7xl sm:text-8xl md:text-[7rem] leading-[0.85] mb-8 text-balance tracking-tighter drop-shadow-lg">
-            Hear the <br /> <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">picture.</span>
-          </h1>
-          
-          <p className="text-lg text-slate-300 leading-relaxed mb-10 max-w-md font-medium">
-            Upload any photograph. Our system decodes the atmospheric emotion and curates the definitive soundtrack for that exact moment. Minimal. Precise. Human.
-          </p>
+  async function handleFile(file) {
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { setError("Choose a JPG, PNG, or WebP image."); return; }
+    if (file.size > MAX_SIZE) { setError("That photo is a little large. Please choose one under 10 MB."); return; }
+    const request = ++uploadRef.current;
+    clearTimeout(timerRef.current);
+    setLoading(false);
+    setError("");
+    setReading(true);
+    try {
+      const image = await readImage(file);
+      if (request === uploadRef.current) setSelected({ id: crypto.randomUUID(), title: file.name.replace(/\.[^.]+$/, ""), image, custom: true });
+    } catch (err) {
+      if (request === uploadRef.current) setError(err.message);
+    } finally {
+      if (request === uploadRef.current) setReading(false);
+    }
+  }
 
-          <div className="flex flex-wrap items-center gap-4">
-            <Link to="/dashboard" className="btn-primary shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50">
-              Start Discovery
-            </Link>
-            <Link to="/about" className="btn-secondary">
-              The Process
-            </Link>
+  function selectSample(sample, scroll = false) {
+    uploadRef.current += 1;
+    clearTimeout(timerRef.current);
+    setLoading(false);
+    setReading(false);
+    setSelected(sample);
+    setMood(sample.mood);
+    setError("");
+    if (scroll) document.getElementById("studio")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function generate() {
+    if (!selected || loading || reading) return;
+    setLoading(true);
+    setError("");
+    timerRef.current = setTimeout(() => {
+      setPlaylist(createPlaylist(selected, mood, language));
+      setGenerated(true);
+      setLoading(false);
+    }, 700);
+  }
+
+  function clearPhoto() {
+    uploadRef.current += 1;
+    clearTimeout(timerRef.current);
+    setSelected(null);
+    setLoading(false);
+    setReading(false);
+    setError("");
+    if (inputRef.current) inputRef.current.value = "";
+  }
+
+  return <div className="discover-page page-enter">
+    <section className="hero" aria-labelledby="hero-title">
+      <div className="hero-copy"><div className="eyebrow"><span>✳</span> YOUR MOMENTS, REMIXED</div><h1 id="hero-title">Every picture.<br/>A different <em>feeling.</em></h1><p>That sunset. That road trip. That blurry night out.<br className="desktop-break"/> Find the soundtrack that feels just like your photo.</p><a href="#studio" className="button button-primary">Find my soundtrack <Icon name="arrow" size={18}/></a><div className="hero-detail"><span className="mini-photos">{collections.slice(0, 3).map(item => <img key={item.id} src={item.image} alt=""/>)}</span><span>A little visual. A little musical. All you.</span></div></div>
+      <div className="hero-art" aria-label="A golden landscape paired with a dreamy soundtrack"><span className="orbit orbit-one"/><span className="orbit orbit-two"/><span className="art-sparkle">✳</span><div className="vinyl"><div className="vinyl-label"><Icon name="music" size={24}/><span>PICTUNE / SIDE A</span></div></div><div className="photo-print"><div className="print-image"><img src={collections[0].image} alt="Golden sunlight spilling across a misty landscape"/><span className="photo-stamp"><span/>a moment worth playing</span></div><div className="print-caption"><span>Somewhere, at golden hour.</span><span>01 / 04</span></div></div><div className="floating-mood"><span className="mood-spark"><Icon name="sparkle" size={20}/></span><div><small>LOOKS LIKE A FEELING</small><strong>Dreamy & nostalgic</strong></div><span className="wave-bars" aria-hidden="true"><i/><i/><i/><i/><i/></span></div><span className="handwritten">if this moment had a sound…</span></div>
+    </section>
+
+    <section id="studio" className="studio-section" aria-labelledby="studio-title">
+      <div className="section-heading"><div><div className="eyebrow subtle">A PHOTO IS ALL IT TAKES</div><h2 id="studio-title">Let’s set the mood<span className="accent-dot">.</span></h2></div><Link to="/about" className="text-link">How it works <Icon name="arrowUp" size={15}/></Link></div>
+      <div className="studio-grid">
+        <div className="upload-panel panel"><div className="panel-heading"><span className="step-number">01</span><h3>Your moment</h3><span className="panel-hint">Start with a photo</span></div>
+          <input ref={inputRef} id="photo-upload" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" aria-label="Upload a photo" onChange={e => { handleFile(e.target.files?.[0]); e.target.value = ""; }}/>
+          <div className={`upload-zone ${dragging ? "is-dragging" : ""} ${selected ? "has-photo" : ""}`} onDragOver={e => { e.preventDefault(); setDragging(true); }} onDragLeave={e => { if (!e.currentTarget.contains(e.relatedTarget)) setDragging(false); }} onDrop={e => { e.preventDefault(); setDragging(false); handleFile(e.dataTransfer.files?.[0]); }}>
+            {selected ? <><img className="uploaded-image" src={selected.image} alt={`Selected photo: ${selected.title}`}/><div className="selected-photo-meta"><span><Icon name="image" size={15}/>{selected.title}</span><button type="button" className="icon-button" aria-label="Remove selected photo" onClick={clearPhoto}><Icon name="close" size={17}/></button></div><button className="change-photo" onClick={() => inputRef.current?.click()}><Icon name="upload" size={15}/> Change photo</button></> : <button type="button" className="upload-trigger" onClick={() => inputRef.current?.click()} disabled={reading}><span className="upload-icon"><Icon name="image" size={27}/><span>+</span></span><strong>{reading ? "Opening your photo…" : dragging ? "Drop it like it’s a good photo" : "Drop a little inspiration here"}</strong><span>or <span className="upload-browse">browse your photos</span></span><small>JPG, PNG or WebP · up to 10 MB</small></button>}
           </div>
-          
-          <div className="mt-16 pt-8 border-t border-white/10 flex gap-12">
-            <div>
-              <div className="font-editorial text-3xl tracking-tight text-white drop-shadow-md">100k+</div>
-              <div className="text-[10px] text-purple-300 uppercase tracking-widest mt-1 font-bold">Photos Scanned</div>
-            </div>
-            <div>
-              <div className="font-editorial text-3xl tracking-tight text-white drop-shadow-md">0.4s</div>
-              <div className="text-[10px] text-purple-300 uppercase tracking-widest mt-1 font-bold">Analysis Time</div>
-            </div>
-          </div>
+          {error && <p className="inline-error" role="alert"><Icon name="info" size={16}/>{error}</p>}
+          <div className="sample-row"><span>Just exploring?<small>Try a sample</small></span><div className="sample-thumbnails">{collections.map(sample => <button key={sample.id} onClick={() => selectSample(sample)} aria-label={`Try ${sample.title}`} aria-pressed={selected?.id === sample.id} className={selected?.id === sample.id ? "selected" : ""}><img src={sample.image} alt=""/>{selected?.id === sample.id && <Icon name="check" size={18}/>}</button>)}</div></div>
+          <div className="preferences"><label htmlFor="language">Soundtrack language</label><select id="language" value={language} onChange={e => setLanguage(e.target.value)} disabled={loading}><option value="all">A little of everything</option><option value="english">English</option><option value="hindi">Hindi</option></select></div>
+          <fieldset className="mood-field"><legend>What’s the feeling?</legend><div className="mood-options">{moods.map(item => <button type="button" key={item.id} className={`mood-chip ${mood === item.id ? "selected" : ""}`} style={{ "--mood-color": item.color }} aria-pressed={mood === item.id} onClick={() => setMood(item.id)} disabled={loading}><Icon name={item.icon} size={14}/>{item.label}</button>)}</div></fieldset>
+          <button className="button button-primary generate-button" onClick={generate} disabled={!selected || loading || reading}>{loading ? <><span className="small-spinner"/>Putting your playlist together…</> : <><Icon name="sparkle" size={18}/>Find my soundtrack<Icon name="arrow" size={17}/></>}</button>
+          <p className="privacy-note"><Icon name="info" size={12}/>Your photo stays in this browser. Your memories stay yours.</p>
         </div>
-
-        {/* Right Side: Editorial Image/Mockup */}
-        <div className="relative hidden lg:block animate-slide-up z-10" style={{ animationDelay: "0.2s" }}>
-          <div className="aspect-[4/5] bg-slate-900 w-full max-w-md ml-auto relative overflow-hidden rounded-2xl shadow-2xl shadow-purple-900/50 border border-white/10">
-            <img 
-              src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800" 
-              alt="Atmospheric concert"
-              className="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-700 hover:opacity-100"
-            />
-            
-            {/* The Analysis Card overlay */}
-            <div className="absolute bottom-6 left-6 right-6 glass-card p-5 border border-white/20 shadow-2xl">
-               <div className="flex justify-between items-start mb-4">
-                 <div>
-                   <div className="text-[10px] uppercase tracking-[0.2em] text-purple-300 mb-1 font-bold">Detected Mood</div>
-                   <div className="font-editorial text-xl tracking-tight text-white">Euphoric / Energetic</div>
-                 </div>
-                 <div className="music-bars text-pink-400">
-                   <span/><span/><span/><span/><span/>
-                 </div>
-               </div>
-               
-               <div className="space-y-3 pt-4 border-t border-white/10">
-                 <div className="flex justify-between items-center">
-                   <div>
-                     <div className="text-sm font-bold text-white">The Night We Met</div>
-                     <div className="text-xs text-slate-300 mt-0.5">Lord Huron</div>
-                   </div>
-                   <div className="w-8 h-8 rounded-full border border-purple-500 flex items-center justify-center hover:bg-purple-500 hover:text-white transition-all cursor-pointer shadow-lg shadow-purple-500/20 text-purple-400">
-                     <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
-                   </div>
-                 </div>
-               </div>
-            </div>
-          </div>
-        </div>
-
+        <Playlist playlist={playlist} generated={generated} loading={loading}/>
       </div>
+      <div className="demo-note"><span className="demo-dot"/><p><strong>A little preview of what’s coming.</strong> Explore curated sample tracks with your chosen mood. AI photo analysis arrives with the backend.</p></div>
+    </section>
 
-      {/* Steps Section */}
-      <div className="max-w-7xl mx-auto px-6 pb-24 relative z-10">
-        <div className="border-t border-white/10 pt-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
-            {[
-              { num: "01", title: "Upload", desc: "Select a photograph that captures a specific feeling or atmosphere." },
-              { num: "02", title: "Analyze", desc: "Our engine reads the visual context, color grading, and subject matter." },
-              { num: "03", title: "Listen", desc: "Instantly receive a curated soundtrack that matches the exact mood." },
-            ].map((step, i) => (
-              <div key={i} className="group p-6 rounded-2xl hover:bg-white/5 transition-colors duration-300 border border-transparent hover:border-white/10">
-                <div className="font-editorial text-5xl text-white/10 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-500 transition-all duration-300 mb-4">{step.num}</div>
-                <h3 className="text-lg font-bold uppercase tracking-wide mb-2 text-slate-200 group-hover:text-white transition-colors">{step.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    <section className="collections-section" id="inspiration" aria-labelledby="inspiration-title"><div className="section-heading"><div><div className="eyebrow subtle">FIND YOUR NEXT FEELING</div><h2 id="inspiration-title">A world of moods</h2></div><span className="section-aside">Different scenes. Different soundtracks.</span></div><div className="collection-grid">{collections.map(item => <button key={item.id} className="collection-card" onClick={() => selectSample(item, true)}><div className="collection-photo"><img src={item.image} alt={item.title} loading="lazy"/><span className="collection-tag">{item.tag}</span><span className="collection-arrow"><Icon name="arrowUp" size={18}/></span></div><h3>{item.title}</h3><p>{item.subtitle}</p></button>)}</div></section>
+    <section className="closing-note"><span>✳</span><p>Some moments are better<br/>with a soundtrack.</p><a href="#studio" className="text-link">Find yours <Icon name="arrow" size={17}/></a></section>
+  </div>;
 }

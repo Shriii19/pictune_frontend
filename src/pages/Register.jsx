@@ -25,5 +25,5 @@ export default function Register() {
     } catch (err) { setError(err.message); }
     finally { setLoading(false); }
   }
-  return <div className="auth-page page-enter"><div className="auth-story"><div className="eyebrow">A SPACE THAT SOUNDS LIKE YOU</div><h1>Collect moments.<br/><em>Keep the feeling.</em></h1><p>Start your own collection of photos, feelings, and the tracks that bring them to life.</p><img className="auth-story-image" src={collections[3].image} alt="Sunlight filtering through a green forest"/></div><AuthForm type="register" onSubmit={handleRegister} error={error} loading={loading}/></div>;
+  return <div className="auth-page"><div className="auth-story"><h1>Your PicTune account.</h1><p>Create an account when account services are available. Until then, you can save playlists on this device without signing in.</p><img className="auth-story-image" src={collections[3].image} alt="Sunlight filtering through a green forest"/></div><AuthForm type="register" onSubmit={handleRegister} error={error} loading={loading}/></div>;
 }

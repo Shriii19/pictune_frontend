@@ -29,6 +29,7 @@ function readImage(file) {
 
 export default function Home() {
   const inputRef = useRef(null);
+  const resultRef = useRef(null);
   const timerRef = useRef(null);
   const uploadRef = useRef(0);
   const [selected, setSelected] = useState(null);
@@ -81,6 +82,14 @@ export default function Home() {
       setPlaylist(createPlaylist(selected, mood, language));
       setGenerated(true);
       setLoading(false);
+      requestAnimationFrame(() => {
+        if (window.matchMedia("(max-width: 760px)").matches) {
+          resultRef.current?.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+            block: "start",
+          });
+        }
+      });
     }, 700);
   }
 
@@ -94,33 +103,102 @@ export default function Home() {
     if (inputRef.current) inputRef.current.value = "";
   }
 
-  return <div className="discover-page page-enter">
-    <section className="hero" aria-labelledby="hero-title">
-      <div className="hero-copy"><div className="eyebrow"><span>✳</span> YOUR MOMENTS, REMIXED</div><h1 id="hero-title">Every picture.<br/>A different <em>feeling.</em></h1><p>That sunset. That road trip. That blurry night out.<br className="desktop-break"/> Find the soundtrack that feels just like your photo.</p><a href="#studio" className="button button-primary">Find my soundtrack <Icon name="arrow" size={18}/></a><div className="hero-detail"><span className="mini-photos">{collections.slice(0, 3).map(item => <img key={item.id} src={item.image} alt=""/>)}</span><span>A little visual. A little musical. All you.</span></div></div>
-      <div className="hero-art" aria-label="A golden landscape paired with a dreamy soundtrack"><span className="orbit orbit-one"/><span className="orbit orbit-two"/><span className="art-sparkle">✳</span><div className="vinyl"><div className="vinyl-label"><Icon name="music" size={24}/><span>PICTUNE / SIDE A</span></div></div><div className="photo-print"><div className="print-image"><img src={collections[0].image} alt="Golden sunlight spilling across a misty landscape"/><span className="photo-stamp"><span/>a moment worth playing</span></div><div className="print-caption"><span>Somewhere, at golden hour.</span><span>01 / 04</span></div></div><div className="floating-mood"><span className="mood-spark"><Icon name="sparkle" size={20}/></span><div><small>LOOKS LIKE A FEELING</small><strong>Dreamy & nostalgic</strong></div><span className="wave-bars" aria-hidden="true"><i/><i/><i/><i/><i/></span></div><span className="handwritten">if this moment had a sound…</span></div>
-    </section>
-
-    <section id="studio" className="studio-section" aria-labelledby="studio-title">
-      <div className="section-heading"><div><div className="eyebrow subtle">A PHOTO IS ALL IT TAKES</div><h2 id="studio-title">Let’s set the mood<span className="accent-dot">.</span></h2></div><Link to="/about" className="text-link">How it works <Icon name="arrowUp" size={15}/></Link></div>
-      <div className="studio-grid">
-        <div className="upload-panel panel"><div className="panel-heading"><span className="step-number">01</span><h3>Your moment</h3><span className="panel-hint">Start with a photo</span></div>
-          <input ref={inputRef} id="photo-upload" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" aria-label="Upload a photo" onChange={e => { handleFile(e.target.files?.[0]); e.target.value = ""; }}/>
-          <div className={`upload-zone ${dragging ? "is-dragging" : ""} ${selected ? "has-photo" : ""}`} onDragOver={e => { e.preventDefault(); setDragging(true); }} onDragLeave={e => { if (!e.currentTarget.contains(e.relatedTarget)) setDragging(false); }} onDrop={e => { e.preventDefault(); setDragging(false); handleFile(e.dataTransfer.files?.[0]); }}>
-            {selected ? <><img className="uploaded-image" src={selected.image} alt={`Selected photo: ${selected.title}`}/><div className="selected-photo-meta"><span><Icon name="image" size={15}/>{selected.title}</span><button type="button" className="icon-button" aria-label="Remove selected photo" onClick={clearPhoto}><Icon name="close" size={17}/></button></div><button className="change-photo" onClick={() => inputRef.current?.click()}><Icon name="upload" size={15}/> Change photo</button></> : <button type="button" className="upload-trigger" onClick={() => inputRef.current?.click()} disabled={reading}><span className="upload-icon"><Icon name="image" size={27}/><span>+</span></span><strong>{reading ? "Opening your photo…" : dragging ? "Drop it like it’s a good photo" : "Drop a little inspiration here"}</strong><span>or <span className="upload-browse">browse your photos</span></span><small>JPG, PNG or WebP · up to 10 MB</small></button>}
-          </div>
-          {error && <p className="inline-error" role="alert"><Icon name="info" size={16}/>{error}</p>}
-          <div className="sample-row"><span>Just exploring?<small>Try a sample</small></span><div className="sample-thumbnails">{collections.map(sample => <button key={sample.id} onClick={() => selectSample(sample)} aria-label={`Try ${sample.title}`} aria-pressed={selected?.id === sample.id} className={selected?.id === sample.id ? "selected" : ""}><img src={sample.image} alt=""/>{selected?.id === sample.id && <Icon name="check" size={18}/>}</button>)}</div></div>
-          <div className="preferences"><label htmlFor="language">Soundtrack language</label><select id="language" value={language} onChange={e => setLanguage(e.target.value)} disabled={loading}><option value="all">A little of everything</option><option value="english">English</option><option value="hindi">Hindi</option></select></div>
-          <fieldset className="mood-field"><legend>What’s the feeling?</legend><div className="mood-options">{moods.map(item => <button type="button" key={item.id} className={`mood-chip ${mood === item.id ? "selected" : ""}`} style={{ "--mood-color": item.color }} aria-pressed={mood === item.id} onClick={() => setMood(item.id)} disabled={loading}><Icon name={item.icon} size={14}/>{item.label}</button>)}</div></fieldset>
-          <button className="button button-primary generate-button" onClick={generate} disabled={!selected || loading || reading}>{loading ? <><span className="small-spinner"/>Putting your playlist together…</> : <><Icon name="sparkle" size={18}/>Find my soundtrack<Icon name="arrow" size={17}/></>}</button>
-          <p className="privacy-note"><Icon name="info" size={12}/>Your photo stays in this browser. Your memories stay yours.</p>
-        </div>
-        <Playlist playlist={playlist} generated={generated} loading={loading}/>
+  return (
+    <div className="discover-page">
+      <div className="page-intro">
+        <h1>Find music for your photo.</h1>
+        <p>Upload an image, pick a mood, and put together a playlist.</p>
       </div>
-      <div className="demo-note"><span className="demo-dot"/><p><strong>A little preview of what’s coming.</strong> Explore curated sample tracks with your chosen mood. AI photo analysis arrives with the backend.</p></div>
-    </section>
 
-    <section className="collections-section" id="inspiration" aria-labelledby="inspiration-title"><div className="section-heading"><div><div className="eyebrow subtle">FIND YOUR NEXT FEELING</div><h2 id="inspiration-title">A world of moods</h2></div><span className="section-aside">Different scenes. Different soundtracks.</span></div><div className="collection-grid">{collections.map(item => <button key={item.id} className="collection-card" onClick={() => selectSample(item, true)}><div className="collection-photo"><img src={item.image} alt={item.title} loading="lazy"/><span className="collection-tag">{item.tag}</span><span className="collection-arrow"><Icon name="arrowUp" size={18}/></span></div><h3>{item.title}</h3><p>{item.subtitle}</p></button>)}</div></section>
-    <section className="closing-note"><span>✳</span><p>Some moments are better<br/>with a soundtrack.</p><a href="#studio" className="text-link">Find yours <Icon name="arrow" size={17}/></a></section>
-  </div>;
+      <section id="studio" className="studio-grid" aria-label="Photo to playlist studio">
+        <div className="upload-panel">
+          <div className="panel-heading">
+            <h2>Your photo</h2>
+            <Link to="/about" className="text-link">How it works <Icon name="arrowUp" size={14} /></Link>
+          </div>
+          <input
+            ref={inputRef}
+            id="photo-upload"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="sr-only"
+            aria-label="Upload a photo"
+            onChange={event => { handleFile(event.target.files?.[0]); event.target.value = ""; }}
+          />
+          <div
+            className={`upload-zone ${dragging ? "is-dragging" : ""} ${selected ? "has-photo" : ""}`}
+            onDragOver={event => { event.preventDefault(); setDragging(true); }}
+            onDragLeave={event => { if (!event.currentTarget.contains(event.relatedTarget)) setDragging(false); }}
+            onDrop={event => { event.preventDefault(); setDragging(false); handleFile(event.dataTransfer.files?.[0]); }}
+          >
+            {selected ? (
+              <>
+                <img className="uploaded-image" src={selected.image} alt={`Selected photo: ${selected.title}`} />
+                <div className="selected-photo-meta">
+                  <span>{selected.title}</span>
+                  <button className="icon-button" aria-label="Remove selected photo" onClick={clearPhoto}><Icon name="close" size={17} /></button>
+                </div>
+                <button className="change-photo" onClick={() => inputRef.current?.click()}><Icon name="upload" size={15} />Change photo</button>
+              </>
+            ) : (
+              <button className="upload-trigger" onClick={() => inputRef.current?.click()} disabled={reading}>
+                <Icon name="image" size={32} />
+                <strong>{reading ? "Opening image…" : dragging ? "Drop your photo here" : "Drag a photo here"}</strong>
+                <span>or <span className="upload-browse">choose a file</span></span>
+                <small>JPG, PNG or WebP / Max. 10 MB</small>
+              </button>
+            )}
+          </div>
+          {error && <p className="inline-error" role="alert"><Icon name="info" size={16} />{error}</p>}
+          <div className="photo-help"><span>Your photo stays on this device.</span><a href="#inspiration">Try an example ↓</a></div>
+
+          <div className="preferences">
+            <div className="language-field">
+              <label htmlFor="language">Language</label>
+              <select id="language" value={language} onChange={event => setLanguage(event.target.value)} disabled={loading}>
+                <option value="all">English + Hindi</option>
+                <option value="english">English</option>
+                <option value="hindi">Hindi</option>
+              </select>
+            </div>
+            <fieldset className="mood-field">
+              <legend>Mood</legend>
+              <div className="mood-options">
+                {moods.map(item => (
+                  <button key={item.id} className={`mood-chip ${mood === item.id ? "selected" : ""}`} aria-pressed={mood === item.id} onClick={() => setMood(item.id)} disabled={loading}>{item.label}</button>
+                ))}
+              </div>
+            </fieldset>
+          </div>
+
+          <button className="button button-primary generate-button" onClick={generate} disabled={!selected || loading || reading}>
+            {loading ? <><span className="small-spinner" />Creating playlist…</> : <>Create playlist<Icon name="arrow" size={18} /></>}
+          </button>
+          <p className="studio-status" role="status">{loading ? "Choosing sample tracks for your mood." : selected ? "Ready when you are." : "Choose a photo or an example to get started."}</p>
+        </div>
+        <div className="playlist-column" ref={resultRef}>
+          <Playlist key={playlist.id} playlist={playlist} generated={generated} loading={loading} />
+        </div>
+      </section>
+
+      <section id="inspiration" className="collections-section" aria-labelledby="inspiration-title">
+        <div className="section-heading">
+          <div><h2 id="inspiration-title">Try it with these</h2><p>Choose a photo to start with.</p></div>
+          <span className="section-aside">04 examples</span>
+        </div>
+        <div className="collection-grid">
+          {collections.map(item => (
+            <button key={item.id} aria-label={`Use ${item.title} example`} className={`collection-card ${selected?.id === item.id ? "selected" : ""}`} onClick={() => selectSample(item, true)}>
+              <div className="collection-photo">
+                <img src={item.image} alt="" loading="lazy" />
+                <span className="collection-arrow"><Icon name={selected?.id === item.id ? "check" : "arrowUp"} size={18} /></span>
+              </div>
+              <div className="collection-caption"><h3>{item.title}</h3><span>{moods.find(m => m.id === item.mood).label}</span></div>
+            </button>
+          ))}
+        </div>
+      </section>
+      <p className="preview-note"><span className="preview-dot" />Preview mode. Tracks are selected from sample playlists. Photo analysis is coming next.</p>
+    </div>
+  );
 }

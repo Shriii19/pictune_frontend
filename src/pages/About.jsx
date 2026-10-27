@@ -1,7 +1,29 @@
 import { Link } from "react-router-dom";
 import Icon from "../components/Icon";
-import { collections } from "../data/collections";
+
+const steps = [
+  { title: "Choose a photo", icon: "image", text: "Upload a JPG, PNG, or WebP image up to 10 MB. You can also use one of the example photos. Images stay in your browser." },
+  { title: "Set your preferences", icon: "music", text: "Choose a mood and a language. This frontend preview uses curated sample tracks; automatic image analysis is planned for the backend." },
+  { title: "Save or listen", icon: "headphones", text: "Open tracks on YouTube, copy the track list, or save a playlist to your library. Saved playlists are stored on this device." },
+];
 
 export default function About() {
-  return <div className="standard-page about-page page-enter"><div className="page-intro"><div className="eyebrow">A CONNECTION YOU CAN FEEL</div><h1>You see a photo.<br/><em>We hear a possibility.</em></h1><p>Some photos feel like a quiet Sunday. Others feel like the best night of your life. PicTune is a place to give those moments a soundtrack.</p></div><div className="about-image"><img src={collections[0].image} alt="Sunlight over a quiet landscape"/><div><span>ONE MOMENT. A THOUSAND FEELINGS.</span><h2>Make it sound like you.</h2></div></div><div className="process-grid">{[{ icon: "image", title: "Bring a moment", text: "Drop in a photo from your camera roll, or start with one of our sample scenes. A place, a person, a memory — anything that makes you feel." }, { icon: "sparkle", title: "Follow the feeling", text: "Pick the mood and language that feel right. For now, explore our curated sample playlists. AI photo analysis is planned for the backend phase." }, { icon: "headphones", title: "Take it with you", text: "Find tracks on YouTube, copy a track list to share, or save the whole feeling to your library. Your collection stays in this browser." }].map((step, i) => <article key={step.title}><span className="process-number">0{i + 1}<Icon name={step.icon} size={23}/></span><h3>{step.title}</h3><p>{step.text}</p></article>)}</div><section className="about-cta"><Icon name="sparkle" size={30}/><h2>Your next favorite song<br/>might be in your camera roll.</h2><Link to="/#studio" className="button button-primary">Let’s find it <Icon name="arrow" size={18}/></Link></section></div>;
+  return (
+    <div className="standard-page">
+      <div className="page-intro">
+        <h1>How PicTune works</h1>
+        <p>A simple way to pair your photos with music. Here’s what you can do in this preview.</p>
+      </div>
+      <div className="process-grid">
+        {steps.map((step, index) => (
+          <article key={step.title}>
+            <span className="process-number">0{index + 1}<Icon name={step.icon} size={20} /></span>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </article>
+        ))}
+      </div>
+      <div className="about-cta"><p>Start with your own photo or an example.</p><Link to="/#studio" className="button button-primary">Open studio <Icon name="arrow" size={16} /></Link></div>
+    </div>
+  );
 }

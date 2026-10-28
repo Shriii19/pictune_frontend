@@ -1,48 +1,51 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import History from "./pages/History";
+import About from "./pages/About";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import History from "./pages/History";
-import Home from "./pages/Home";
-import About from "./pages/About";
 import AuthCallback from "./pages/AuthCallback";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { useAuth } from "./hooks/useAuth.jsx";
 import "./App.css";
 
-function App() {
-  const { isAuthenticated } = useAuth();
+function PageScroll() {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if (hash) requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth" }));
+    else window.scrollTo(0, 0);
+  }, [pathname, hash]);
+  return null;
+}
 
+function Layout() {
   return (
-    <Router>
-      <div className="noise-overlay min-h-screen bg-[#0f172a] text-slate-200 font-sans relative overflow-x-hidden">
-        {/* App Content */}
-        <div className="relative z-10 flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Home />} />
-              <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
-              <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />} />
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
-              <Route path="/about" element={<About />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
-
-          {/* Footer */}
-          <footer className="relative z-10 py-8 text-center border-t border-white/10 mt-12 bg-slate-900/50 backdrop-blur-md">
-            <p className="text-xs text-purple-300 tracking-widest uppercase font-bold">
-              &copy; {new Date().getFullYear()} PicTune &mdash; AI Mood Music.
-            </p>
-          </footer>
-        </div>
+    <div className="app-shell">
+      <PageScroll />
+      <a className="skip-link" href="#main-content">Skip to content</a>
+      <Navbar />
+      <div className="main-shell">
+        <main id="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Home />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+        <footer className="app-footer">
+          <span>© {new Date().getFullYear()} PicTune</span>
+          <div><span>Frontend preview</span><Link to="/about">About this project <span aria-hidden="true">↗</span></Link></div>
+        </footer>
       </div>
-    </Router>
+    </div>
   );
 }
 
-export default App;
+export default function App() {
+  return <BrowserRouter><Layout /></BrowserRouter>;
+}

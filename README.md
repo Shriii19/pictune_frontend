@@ -1,144 +1,45 @@
-# Pictune Frontend
+# PicTune — A sound for every sight
 
-A modern React-based web application for photo analysis and language detection, built with Vite and styled with Tailwind CSS.
+A React 19 frontend for turning photos and feelings into soundtracks. This phase focuses on the complete frontend experience; AI analysis and account services come next.
 
-## Features
+## Run locally
 
-- 📸 Photo upload and preview
-- 🔍 Image analysis with language detection
-- 🌐 Multi-language filtering support
-- ⚡ Fast development with Vite
-- 🎨 Beautiful UI with Tailwind CSS v4
-- ✨ Modern React 19 with hooks
+Requires Node.js 20.19+ or 22.12+ and npm.
 
-## Tech Stack
-
-- **React 19** - Latest React features and improvements
-- **Vite** - Next-generation frontend tooling
-- **Tailwind CSS v4** - Utility-first CSS framework
-- **ESLint** - Code linting and quality assurance
-
-## Prerequisites
-
-Before you begin, ensure you have installed:
-- Node.js (v16 or higher)
-- npm or yarn package manager
-
-## Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/Shriii19/pictune-frontend.git
-cd pictune-frontend
-```
-
-2. Install dependencies:
-```bash
+```sh
 npm install
-```
-
-3. Configure environment variables:
-
-Create `.env.development` for local development:
-```env
-VITE_API_URL=http://localhost:5000
-```
-
-For production deployment, configure the environment variable in your hosting platform (Vercel, Netlify, etc.):
-```env
-VITE_API_URL=https://your-backend-url.com
-```
-
-## Development
-
-Start the development server:
-```bash
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173` (default Vite port).
+Open the local URL printed by Vite. Production build: `npm run build`.
 
-## Building for Production
+## Frontend features
 
-Create a production build:
-```bash
-npm run build
-```
+- Responsive music studio with compact top navigation and a mobile menu
+- Drag-and-drop photo upload, preview, replacement, and removal
+- JPG, PNG, and WebP validation with a 10 MB file limit
+- Four sample scenes and four mood choices
+- English, Hindi, or mixed curated sample playlists
+- YouTube search links for each track and copyable track lists
+- Device-local saved playlists, search, and removal
+- Consistent discovery, library, process, sign-in, and registration screens
+- Accessible labels, keyboard focus states, and reduced-motion support
 
-Preview the production build:
-```bash
-npm run preview
-```
+Photos are resized locally before preview and storage. Uploaded photos are not sent to a server. Library data lives in localStorage on the current browser and device, with up to 24 saved playlists. Clearing browser data removes it.
 
-## Deployment
+The studio uses handpicked sample tracks based on the selected mood and language. It does not analyze uploaded images yet. Image colors and sample artwork are illustrative. Sample photos load from Unsplash; fonts load from Google Fonts. Track thumbnails are scene artwork, not official album covers.
 
-### Vercel (Recommended)
+## Backend phase
 
-1. Push your code to GitHub
-2. Import your repository in Vercel
-3. Configure the environment variable:
-   - Add `VITE_API_URL` with your backend URL
-4. Deploy!
+Copy `.env.example` to `.env.local`. Account forms are in preview mode by default and do not submit credentials. Existing API functions in `src/services/api.js` are retained for integration.
 
-The `vercel.json` file is already configured for optimal deployment.
+When account services are ready, set `VITE_ENABLE_BACKEND=true` and configure `VITE_API_URL`. Google authentication also needs `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. Restart Vite after changing environment variables. The studio and library remain local previews until their endpoints are integrated.
 
-### Other Platforms
+## Main files
 
-The app can be deployed to any static hosting platform:
-- Netlify
-- GitHub Pages
-- AWS S3 + CloudFront
-- Firebase Hosting
-
-Make sure to:
-1. Set the build command to `npm run build`
-2. Set the output directory to `dist`
-3. Configure the `VITE_API_URL` environment variable
-
-## Linting
-
-Run ESLint to check code quality:
-```bash
-npm run lint
-```
-
-## Project Structure
-
-```
-pictune-frontend/
-├── public/          # Static assets
-├── src/
-│   ├── assets/      # Images, fonts, etc.
-│   ├── App.jsx      # Main application component
-│   ├── App.css      # Application styles
-│   ├── main.jsx     # Application entry point
-│   └── index.css    # Global styles
-├── index.html       # HTML template
-├── vite.config.js   # Vite configuration
-├── eslint.config.js # ESLint configuration
-└── package.json     # Project dependencies
-```
-
-## Features Overview
-
-### Photo Upload
-- Drag and drop or click to upload images
-- Real-time preview of selected photos
-- Support for common image formats
-
-### Language Detection
-- Automatic language detection from images
-- Filter results by specific languages
-- Support for multiple language options
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-
-## Contact
-
-For questions or support, please open an issue on GitHub.
-
-
-<!-- Build fix: Updated Vercel build command configuration - 2026-02-02 -->
+- `src/pages/Home.jsx`: upload studio, preferences, and mood collections
+- `src/components/Playlist.jsx`: tracks, local saving, and copying
+- `src/data/collections.js`: sample scenes and curated tracks
+- `src/hooks/useLibrary.js`: local saved playlist persistence
+- `src/pages/History.jsx`: searchable library
+- `src/App.css` and `src/index.css`: layout and shared design tokens

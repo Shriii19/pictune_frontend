@@ -42,7 +42,7 @@ export default function Navbar() {
           <NavLink to="/about" onClick={() => setMobileOpen(false)}>How it works</NavLink>
         </nav>
         <div className="header-actions">
-          {isAuthenticated ? <button className="header-account" onClick={logout}>Sign out</button> : <Link to="/login" className="header-account">Sign in <Icon name="arrowUp" size={14} /></Link>}
+          {isAuthenticated ? <button className="header-account" onClick={() => { setMobileOpen(false); logout(); }}>Sign out</button> : <Link to="/login" className="header-account" onClick={() => setMobileOpen(false)}>Sign in <Icon name="arrowUp" size={14} /></Link>}
           <button ref={menuRef} className="icon-button mobile-menu" aria-label={mobileOpen ? "Close navigation" : "Open navigation"} aria-expanded={mobileOpen} aria-controls="primary-navigation" onClick={() => setMobileOpen(!mobileOpen)}><Icon name={mobileOpen ? "close" : "menu"} /></button>
         </div>
       </div>

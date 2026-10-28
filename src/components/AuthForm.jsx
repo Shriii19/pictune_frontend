@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import Icon from "./Icon";
 
 export default function AuthForm({ type, onSubmit, error, loading }) {
   const [email, setEmail] = useState("");
@@ -9,183 +10,41 @@ export default function AuthForm({ type, onSubmit, error, loading }) {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [phone, setPhone] = useState("");
-
+  const [oauthError, setOauthError] = useState("");
+  const [oauthLoading, setOauthLoading] = useState(false);
   const isRegister = type === "register";
+  const backendEnabled = import.meta.env.VITE_ENABLE_BACKEND === "true";
 
-  const handleSubmit = (e) => {
+  function submit(e) {
     e.preventDefault();
     if (isRegister && password !== confirmPassword) {
-      onSubmit(null, "Passwords do not match");
+      onSubmit(null, "Your passwords don’t match. Please try again.");
       return;
     }
     onSubmit({ email, password, username, phone });
-  };
+  }
 
-  return (
-    <div className="w-full max-w-md animate-slide-up bg-white border border-[#E5E5EA] p-8 md:p-10 shadow-sm">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="font-editorial text-3xl tracking-tight text-[#111111] uppercase">
-          {isRegister ? "Create Account" : "Access Studio"}
-        </h2>
-        <p className="text-[#666666] mt-2 text-xs uppercase tracking-widest font-bold">
-          {isRegister
-            ? "Begin the visual acoustic journey"
-            : "Return to your visual analysis"}
-        </p>
-      </div>
+  async function googleLogin() {
+    if (!supabase || !backendEnabled) return;
+    setOauthLoading(true);
+    setOauthError("");
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/auth/callback` } });
+      if (error) throw error;
+    } catch (err) {
+      setOauthError(err.message || "Google sign-in is unavailable right now.");
+    } finally {
+      setOauthLoading(false);
+    }
+  }
 
-      {/* Error Message */}
-      {error && (
-        <div className="mb-6 p-4 border border-[#FF3B30] bg-[#FAFAFA]">
-          <p className="text-[#FF3B30] text-xs font-bold uppercase tracking-widest text-center">{error}</p>
-        </div>
-      )}
-
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {isRegister && (
-          <div>
-            <label className="block text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              required
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5EA] text-[#111111] text-sm focus:outline-none focus:border-[#111111] transition-colors"
-              placeholder="johndoe"
-            />
-          </div>
-        )}
-
-        {isRegister && (
-          <div>
-            <label className="block text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-2">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              required
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5EA] text-[#111111] text-sm focus:outline-none focus:border-[#111111] transition-colors"
-              placeholder="+1234567890"
-            />
-          </div>
-        )}
-
-        <div>
-          <label className="block text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-2">
-            Email Address
-          </label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5EA] text-[#111111] text-sm focus:outline-none focus:border-[#111111] transition-colors"
-            placeholder="you@example.com"
-          />
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em]">
-              Password
-            </label>
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-[10px] font-bold text-[#888888] hover:text-[#111111] uppercase tracking-widest"
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
-          </div>
-          <input
-            type={showPassword ? "text" : "password"}
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5EA] text-[#111111] text-sm focus:outline-none focus:border-[#111111] transition-colors"
-            placeholder="••••••••"
-          />
-        </div>
-
-        {isRegister && (
-          <div>
-            <label className="block text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em] mb-2">
-              Confirm Password
-            </label>
-            <input
-              type={showPassword ? "text" : "password"}
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5EA] text-[#111111] text-sm focus:outline-none focus:border-[#111111] transition-colors"
-              placeholder="••••••••"
-            />
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="btn-primary w-full py-4 mt-2"
-        >
-          {loading ? "Processing..." : (isRegister ? "Register" : "Authenticate")}
-        </button>
-
-        <div className="relative flex items-center py-2">
-          <div className="flex-grow border-t border-[#E5E5EA]"></div>
-          <span className="flex-shrink-0 mx-4 text-[10px] font-bold text-[#888888] uppercase tracking-[0.2em]">Or</span>
-          <div className="flex-grow border-t border-[#E5E5EA]"></div>
-        </div>
-
-        <button
-          type="button"
-          onClick={async () => {
-            const { error } = await supabase.auth.signInWithOAuth({
-              provider: 'google',
-              options: {
-                redirectTo: `${window.location.origin}/auth/callback`,
-              },
-            });
-            if (error) {
-              console.error("Error logging in with Google:", error.message);
-            }
-          }}
-          className="w-full py-4 bg-white border border-[#E5E5EA] text-[#111111] text-sm font-bold uppercase tracking-widest hover:bg-[#FAFAFA] transition-colors flex items-center justify-center gap-3"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M22.56 12.25C22.56 11.47 22.49 10.72 22.36 10H12V14.26H17.92C17.66 15.63 16.88 16.78 15.68 17.55V20.31H19.25C21.34 18.39 22.56 15.58 22.56 12.25Z" fill="#4285F4"/>
-            <path d="M12 23C14.97 23 17.46 22.02 19.25 20.31L15.68 17.55C14.71 18.2 13.45 18.59 12 18.59C9.2 18.59 6.83 16.7 5.98 14.16H2.33V16.99C4.1 20.5 7.76 23 12 23Z" fill="#34A853"/>
-            <path d="M5.98 14.16C5.76 13.51 5.64 12.77 5.64 12C5.64 11.23 5.76 10.49 5.98 9.84V7.01H2.33C1.6 8.47 1.18 10.18 1.18 12C1.18 13.82 1.6 15.53 2.33 16.99L5.98 14.16Z" fill="#FBBC05"/>
-            <path d="M12 5.41C13.62 5.41 15.07 5.97 16.21 7.06L19.34 3.93C17.45 2.18 14.97 1 12 1C7.76 1 4.1 3.5 2.33 7.01L5.98 9.84C6.83 7.3 9.2 5.41 12 5.41Z" fill="#EA4335"/>
-          </svg>
-          Continue with Google
-        </button>
-      </form>
-
-      {/* Footer */}
-      <div className="mt-8 pt-6 border-t border-[#E5E5EA] text-center text-xs text-[#888888] font-bold uppercase tracking-widest">
-        {isRegister ? (
-          <>
-            Existing User?{" "}
-            <Link to="/login" className="text-[#111111] hover:underline transition-colors ml-1">
-              Sign In
-            </Link>
-          </>
-        ) : (
-          <>
-            New User?{" "}
-            <Link to="/register" className="text-[#111111] hover:underline transition-colors ml-1">
-              Create Profile
-            </Link>
-          </>
-        )}
-      </div>
-    </div>
-  );
+  return <div className="auth-card"><h2>{isRegister ? "Create an account" : "Sign in"}</h2><p>{isRegister ? "Enter your details to get started." : "Enter your email and password."}</p>{(error || oauthError) && <div className="auth-error" role="alert">{error || oauthError}</div>}<form onSubmit={submit} className="auth-form">
+    {isRegister && <><div><label htmlFor="username">Your name</label><input id="username" autoComplete="nickname" required value={username} onChange={e => setUsername(e.target.value)} placeholder="What should we call you?"/></div><div><label htmlFor="phone">Phone number</label><input id="phone" type="tel" autoComplete="tel" required value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 98765 43210"/></div></>}
+    <div><label htmlFor="email">Email address</label><input id="email" type="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"/></div>
+    <div><div className="password-label"><label htmlFor="password">Password</label><button type="button" onClick={() => setShowPassword(!showPassword)} aria-controls="password" aria-pressed={showPassword}>{showPassword ? "Hide" : "Show"}</button></div><input id="password" type={showPassword ? "text" : "password"} autoComplete={isRegister ? "new-password" : "current-password"} minLength={isRegister ? 8 : undefined} required value={password} onChange={e => setPassword(e.target.value)} placeholder={isRegister ? "At least 8 characters" : "Your password"}/></div>
+    {isRegister && <div><label htmlFor="confirm-password">Confirm password</label><input id="confirm-password" type={showPassword ? "text" : "password"} autoComplete="new-password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="One more time"/></div>}
+    <button type="submit" className="button button-primary" disabled={loading}>{loading ? <><span className="small-spinner"/>One moment…</> : <>{isRegister ? "Create my account" : "Sign in"}<Icon name="arrow" size={16}/></>}</button>
+    <div className="auth-divider">or</div>
+    <button type="button" className="button button-secondary" disabled={!supabase || !backendEnabled || oauthLoading} onClick={googleLogin}>{oauthLoading ? "Connecting…" : backendEnabled && supabase ? "Continue with Google" : "Google sign-in · coming soon"}</button>
+  </form><div className="auth-footer">{isRegister ? <>Already have an account? <Link to="/login">Sign in</Link></> : <>New around here? <Link to="/register">Create an account</Link></>}</div>{!backendEnabled && <div className="auth-preview-note">Accounts arrive in the backend phase. In the meantime, <Link to="/#studio">explore the studio without signing in →</Link></div>}</div>;
 }

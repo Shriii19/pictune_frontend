@@ -38,7 +38,7 @@ export default function History() {
                 <span>Saved {new Date(item.savedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
                 <button className="icon-button" aria-label={`Remove ${item.title} from library`} onClick={() => removePlaylist(item.id)}><Icon name="trash" size={16} /></button>
               </div>
-              <Playlist playlist={item} generated compact />
+              <Playlist playlist={item} compact />
             </article>
           ))}
         </div>

@@ -1,45 +1,23 @@
-# PicTune — A sound for every sight
+# PicTune — Photo to playlist
 
-A React 19 frontend for turning photos and feelings into soundtracks. This phase focuses on the complete frontend experience; AI analysis and account services come next.
+A React frontend connected to the PicTune REST API for photo results and email/password accounts.
 
 ## Run locally
 
-Requires Node.js 20.19+ or 22.12+ and npm.
+Install dependencies with `npm install`, copy `.env.example` to `.env.local`, and run `npm run dev`. Start the backend separately on port 5000. `VITE_API_URL` must include the `/api` prefix. Production defaults to `https://pictune-backend.vercel.app/api`.
 
-```sh
-npm install
-npm run dev
-```
+Run `npm run build` for a production build and `npm run lint` for code checks.
 
-Open the local URL printed by Vite. Production build: `npm run build`.
+## Photo results
 
-## Frontend features
+Upload one JPEG, PNG, WebP, or AVIF up to 4 MiB. The original file is sent as multipart form data to `/api/predict`, with the selected Hindi, English, or Marathi language preferences. Guests use a persistent UUID; signed-in users send their backend login token. Two successful guest results are allowed before sign-in is required.
 
-- Responsive music studio with compact top navigation and a mobile menu
-- Drag-and-drop photo upload, preview, replacement, and removal
-- JPG, PNG, and WebP validation with a 10 MB file limit
-- Four sample scenes and four mood choices
-- English, Hindi, or mixed curated sample playlists
-- YouTube search links for each track and copyable track lists
-- Device-local saved playlists, search, and removal
-- Consistent discovery, library, process, sign-in, and registration screens
-- Accessible labels, keyboard focus states, and reduced-motion support
+Only successful backend results populate the playlist. Requests that fail show the error without creating songs locally. The result displays the analysis source, returned songs, and captions. Colour-only responses are explicitly labelled as estimates; actual scene recognition requires the backend's vision integration to be configured.
 
-Photos are resized locally before preview and storage. Uploaded photos are not sent to a server. Library data lives in localStorage on the current browser and device, with up to 24 saved playlists. Clearing browser data removes it.
+The latest result ID is kept in session storage and reloaded through `/api/results` on refresh. The library stores result text locally on this device, up to 24 entries. Photo bytes are not stored in the library. It uses `pictune-library-v2`; older local entries are left untouched and are not displayed.
 
-The studio uses handpicked sample tracks based on the selected mood and language. It does not analyze uploaded images yet. Image colors and sample artwork are illustrative. Sample photos load from Unsplash; fonts load from Google Fonts. Track thumbnails are scene artwork, not official album covers.
+## Accounts and deployment
 
-## Backend phase
+Login and registration call the backend's `/api/login` and `/api/register` endpoints directly. Backend storage, signing credentials, allowed frontend origin, and vision-provider configuration must be set in the backend deployment. Only `VITE_API_URL` belongs in frontend configuration; never put backend secrets in a `VITE_` variable.
 
-Copy `.env.example` to `.env.local`. Account forms are in preview mode by default and do not submit credentials. Existing API functions in `src/services/api.js` are retained for integration.
-
-When account services are ready, set `VITE_ENABLE_BACKEND=true` and configure `VITE_API_URL`. Google authentication also needs `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. Restart Vite after changing environment variables. The studio and library remain local previews until their endpoints are integrated.
-
-## Main files
-
-- `src/pages/Home.jsx`: upload studio, preferences, and mood collections
-- `src/components/Playlist.jsx`: tracks, local saving, and copying
-- `src/data/collections.js`: sample scenes and curated tracks
-- `src/hooks/useLibrary.js`: local saved playlist persistence
-- `src/pages/History.jsx`: searchable library
-- `src/App.css` and `src/index.css`: layout and shared design tokens
+Rebuild and redeploy the frontend after configuration or source changes. A reachable health endpoint does not establish that account or photo storage is configured.

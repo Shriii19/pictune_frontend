@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-const KEY = "pictune-library-v1";
+const KEY = "pictune-library-v2";
 
 function readLibrary() {
   try {
     const entries = JSON.parse(localStorage.getItem(KEY) || "[]");
-    return Array.isArray(entries) ? entries.filter(item => item?.id && Array.isArray(item.songs)) : [];
+    return Array.isArray(entries) ? entries.filter(item => /^[a-f0-9]{64}$/.test(item?.id || "") && item.analysis?.source && Array.isArray(item.songs)) : [];
   } catch {
     return [];
   }
@@ -32,7 +32,9 @@ export function useLibrary() {
   function toggleSave(playlist) {
     const entries = readLibrary();
     const exists = entries.some(item => item.id === playlist.id);
-    update(exists ? entries.filter(item => item.id !== playlist.id) : [{ ...playlist, savedAt: new Date().toISOString() }, ...entries].slice(0, 24));
+    // Object URLs expire when leaving the page; keep result text without raw photo data.
+    const entry = { ...playlist, image: undefined, savedAt: new Date().toISOString() };
+    update(exists ? entries.filter(item => item.id !== playlist.id) : [entry, ...entries].slice(0, 24));
     return !exists;
   }
 

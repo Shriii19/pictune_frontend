@@ -6,7 +6,6 @@ import History from "./pages/History";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import AuthCallback from "./pages/AuthCallback";
 import "./App.css";
 
 function PageScroll() {
@@ -33,13 +32,13 @@ function Layout() {
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/auth/callback" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
         <footer className="app-footer">
           <span>© {new Date().getFullYear()} PicTune</span>
-          <div><span>Frontend preview</span><Link to="/about">About this project <span aria-hidden="true">↗</span></Link></div>
+          <div><Link to="/about">How PicTune works <span aria-hidden="true">↗</span></Link></div>
         </footer>
       </div>
     </div>

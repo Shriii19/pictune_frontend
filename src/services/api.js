@@ -1,105 +1,41 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const BASE_URL = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:5000/api" : "https://pictune-backend.vercel.app/api")).replace(/\/+$/, "");
 
-const getAuthHeaders = () => {
+function getAuthHeaders() {
   const token = localStorage.getItem("token");
-  const deviceId = localStorage.getItem("device_id");
-
-  return {
-    ...(token && { Authorization: `Bearer ${token}` }),
-    "x-device-id": deviceId || "guest",
-  };
-};
-
-export const login = async (email, password) => {
-  const res = await fetch(`${BASE_URL}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || "Login failed");
+  if (token) return { Authorization: `Bearer ${token}` };
+  let deviceId = localStorage.getItem("device_id");
+  if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(deviceId || "")) {
+    deviceId = crypto.randomUUID();
+    localStorage.setItem("device_id", deviceId);
   }
+  return { "X-Device-Id": deviceId };
+}
 
-  return data.data;
-};
-
-export const register = async (email, password, username, phone) => {
-  const res = await fetch(`${BASE_URL}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password, username, phone }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || "Register failed");
+async function request(route, options = {}) {
+  let response;
+  try { response = await fetch(`${BASE_URL}${route}`, options); }
+  catch (error) {
+    if (options.signal?.aborted) throw error;
+    throw new Error("Unable to reach PicTune. Please try again shortly.");
   }
-
-  return data.data;
-};
-
-export const verifyOtp = async (email, otp) => {
-  const res = await fetch(`${BASE_URL}/verify-otp`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, otp }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || "OTP verification failed");
-  }
-
-  return data;
-};
-
-export const uploadPhoto = async (formData) => {
-  const res = await fetch(`${BASE_URL}/predict`, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: formData,
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    // Check if guest limit reached
-    if (res.status === 403 && data.error === "LIMIT_REACHED") {
-      const error = new Error(data.message || "Please sign up to continue");
-      error.code = "LIMIT_REACHED";
-      throw error;
-    }
-    throw new Error(data.error || "Upload failed");
-  }
-
-  return data.data || data;
-};
-
-export const getHistory = async () => {
-  try {
-    const res = await fetch(`${BASE_URL}/history`, {
-      headers: getAuthHeaders(),
-    });
-
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || data.message || "History fetch failed");
-    }
-
-    const data = await res.json();
-    
-    // Return the history array (handle both direct array and nested response)
-    return data.history || data;
-  } catch (error) {
-    // Handle network errors
-    if (error.message === "Failed to fetch" || error instanceof TypeError) {
-      throw new Error("Unable to connect to server. Please check your internet connection or try again later.");
-    }
+  let payload;
+  try { payload = await response.json(); }
+  catch { throw new Error("PicTune returned an invalid response. Please try again shortly."); }
+  if (!response.ok) {
+    const error = new Error(payload.error || "Unable to complete this request.");
+    error.status = response.status;
+    error.code = payload.code;
+    error.authRequired = payload.authRequired;
     throw error;
   }
-};
+  return payload.data;
+}
+
+export const login = (email, password) => request("/login", {
+  method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }),
+});
+export const register = (email, password, username, phone) => request("/register", {
+  method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password, username, phone }),
+});
+export const uploadPhoto = (formData, { signal } = {}) => request("/predict", { method: "POST", headers: getAuthHeaders(), body: formData, signal });
+export const getResult = (id, { signal } = {}) => request(`/results?id=${encodeURIComponent(id)}`, { signal });

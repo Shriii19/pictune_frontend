@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/AuthForm";
 import { login } from "../services/api";
 import { useAuth } from "../hooks/useAuth.jsx";
-import { collections } from "../data/collections";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -11,10 +10,6 @@ export default function Login() {
   const navigate = useNavigate();
   const { login: loginUser } = useAuth();
   async function handleLogin(credentials) {
-    if (import.meta.env.VITE_ENABLE_BACKEND !== "true") {
-      setError("Account services are coming in the backend phase. You can use the studio and save playlists on this device without signing in.");
-      return;
-    }
     setLoading(true);
     setError("");
     try {
@@ -24,5 +19,5 @@ export default function Login() {
     } catch (err) { setError(err.message); }
     finally { setLoading(false); }
   }
-  return <div className="auth-page"><div className="auth-story"><h1>Welcome back.</h1><p>Sign in to PicTune. You can also use the studio without an account during this preview.</p><img className="auth-story-image" src={collections[0].image} alt="A warm and quiet landscape"/></div><AuthForm type="login" onSubmit={handleLogin} error={error} loading={loading}/></div>;
+  return <div className="auth-page"><div className="auth-story"><h1>Welcome back.</h1><p>Sign in to continue creating photo playlists after your two free guest results.</p></div><AuthForm type="login" onSubmit={handleLogin} error={error} loading={loading}/></div>;
 }

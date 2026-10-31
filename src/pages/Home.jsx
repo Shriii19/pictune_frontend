@@ -4,9 +4,19 @@ import Icon from "../components/Icon";
 import Playlist from "../components/Playlist";
 import { getResult, uploadPhoto } from "../services/api";
 import { toPlaylist } from "../lib/playlist";
+import { LIFETIME } from "../lib/plan";
+import ProBanner from "../components/ProBanner";
+import { Arrow, Circled, Polaroid, Squiggle, Vinyl } from "../components/Doodles";
 
 const MAX_SIZE = 4 * 1024 * 1024;
 const LAST_RESULT = "pictune-last-result-v1";
+const LOADING_LINES = ["Looking at the light…", "Reading the mood…", "Digging through the crates…", "Picking the songs…"];
+const LANGUAGES = [
+  { value: "all", label: "All three" },
+  { value: "hindi", label: "Hindi" },
+  { value: "english", label: "English" },
+  { value: "marathi", label: "Marathi" },
+];
 
 export default function Home() {
   const inputRef = useRef(null);
@@ -19,6 +29,14 @@ export default function Home() {
   const [error, setError] = useState("");
   const [authRequired, setAuthRequired] = useState(false);
   const [playlist, setPlaylist] = useState(null);
+  const [loadingStep, setLoadingStep] = useState(0);
+
+  useEffect(() => {
+    if (!loading) return;
+    const timer = setInterval(() => setLoadingStep(step => step + 1), 1800);
+    return () => clearInterval(timer);
+  }, [loading]);
+  const loadingLine = LOADING_LINES[loadingStep % LOADING_LINES.length];
 
   useEffect(() => {
     const controller = new AbortController();
@@ -87,27 +105,91 @@ export default function Home() {
     if (inputRef.current) inputRef.current.value = "";
   }
 
+  function chooseLanguage(value) {
+    setLanguage(value);
+    setPlaylist(null);
+    sessionStorage.removeItem(LAST_RESULT);
+  }
+
   return <div className="discover-page">
-    <div className="page-intro"><h1>Find music for your photo.</h1><p>Upload a photo and choose your song language.</p></div>
-    <section id="studio" className="studio-grid" aria-label="Photo to playlist studio">
-      <div className="upload-panel">
-        <div className="panel-heading"><h2>Your photo</h2><Link to="/about" className="text-link">How it works <Icon name="arrowUp" size={14} /></Link></div>
-        <input ref={inputRef} id="photo-upload" type="file" accept="image/jpeg,image/png,image/webp,image/avif" className="sr-only" aria-label="Upload a photo" onChange={event => { handleFile(event.target.files?.[0]); event.target.value = ""; }} />
-        <div className={`upload-zone ${dragging ? "is-dragging" : ""} ${selected ? "has-photo" : ""}`} onDragOver={event => { event.preventDefault(); setDragging(true); }} onDragLeave={event => { if (!event.currentTarget.contains(event.relatedTarget)) setDragging(false); }} onDrop={event => { event.preventDefault(); setDragging(false); handleFile(event.dataTransfer.files?.[0]); }}>
-          {selected ? <>
-            <img className="uploaded-image" src={selected.image} alt={`Selected photo: ${selected.title}`} />
-            <div className="selected-photo-meta"><span>{selected.title}</span><button className="icon-button" aria-label="Remove selected photo" onClick={clearPhoto}><Icon name="close" size={17} /></button></div>
-            <button className="change-photo" onClick={() => inputRef.current?.click()}><Icon name="upload" size={15} />Change photo</button>
-          </> : <button className="upload-trigger" onClick={() => inputRef.current?.click()}><Icon name="image" size={32} /><strong>{dragging ? "Drop your photo here" : "Drag a photo here"}</strong><span>or <span className="upload-browse">choose a file</span></span><small>JPG, PNG, WebP or AVIF / Max. 4 MB</small></button>}
+    <section className="hero">
+      <div className="hero-copy">
+        <p className="kicker mono">Photo in · Playlist out</p>
+        <h1>Put a song to <span className="nowrap"><span className="underlined">your photo<Squiggle /></span>.</span></h1>
+        <p className="hero-lede">Upload a picture. PicTune looks at the light, the place and the people in it, then hands you songs that fit. In Hindi, English or Marathi.</p>
+        <div className="hero-actions">
+          <a href="#studio" className="button button-primary">Try it with a photo <Icon name="arrow" size={17} /></a>
+          <Link to="/pricing" className="text-link">Captions are {LIFETIME.label}, once</Link>
         </div>
-        {error && <p className="inline-error" role="alert"><Icon name="info" size={16} />{error}</p>}
-        {authRequired && <p className="account-links"><Link to="/login">Sign in</Link> or <Link to="/register">create an account</Link> to continue.</p>}
-        <div className="photo-help"><span>Your photo is sent securely for processing. Raw photos are not saved by the backend.</span></div>
-        <div className="preferences"><div className="language-field"><label htmlFor="language">Language</label><select id="language" value={language} onChange={event => { setLanguage(event.target.value); setPlaylist(null); sessionStorage.removeItem(LAST_RESULT); }} disabled={loading}><option value="all">Hindi + English + Marathi</option><option value="english">English</option><option value="hindi">Hindi</option><option value="marathi">Marathi</option></select></div></div>
-        <button className="button button-primary generate-button" onClick={generate} disabled={!selected || loading}>{loading ? <><span className="small-spinner" />Analysing photo…</> : <>Create playlist<Icon name="arrow" size={18} /></>}</button>
-        <p className="studio-status" role="status">{loading ? "Waiting for your photo result." : selected ? "Ready when you are." : "Choose a photo to get started."}</p>
       </div>
-      <div className="playlist-column" ref={resultRef}>{playlist ? <Playlist key={playlist.id} playlist={playlist} /> : <div className="empty-state" role="status"><span className="empty-icon"><Icon name="music" size={28} /></span><h3>{loading ? "Analysing your photo" : "Your playlist will appear here"}</h3><p>{loading ? "Songs and captions will appear when processing finishes." : "Upload a photo to get songs and captions from PicTune."}</p></div>}</div>
+      <div className="hero-collage" aria-hidden="true">
+        <Polaroid tilt={-4} caption="goa, dec ’25"><span className="scene scene-sunset" /></Polaroid>
+        <div className="receipt">
+          <p className="mono receipt-head">PICTUNE · SIDE A</p>
+          <ol className="mono">
+            <li className="is-playing"><em className="mini-eq"><b /><b /><b /></em><span>Kho Gaye Hum Kahan</span><i />HI</li>
+            <li><span>Golden Hour</span><i />EN</li>
+            <li><span>Saat Samudrapar</span><i />MR</li>
+          </ol>
+          <p className="receipt-caption">“Salt in the air, gold in the sky.”</p>
+        </div>
+      </div>
     </section>
+
+    <section id="studio" className="studio" aria-label="Photo to playlist studio">
+      <div className="studio-head">
+        <h2>The studio <span className="hand-note" aria-hidden="true">start here<Arrow /></span></h2>
+        <p className="mono">One photo · up to 4 MB · JPG, PNG, WebP, AVIF</p>
+      </div>
+      <div className="studio-grid">
+        <div className="upload-panel">
+          <div className="panel-heading"><h3><span className="side mono">A</span>Your photo</h3><Link to="/about" className="text-link">How it works</Link></div>
+          <input ref={inputRef} id="photo-upload" type="file" accept="image/jpeg,image/png,image/webp,image/avif" className="sr-only" aria-label="Upload a photo" onChange={event => { handleFile(event.target.files?.[0]); event.target.value = ""; }} />
+          {selected ? <div className={`selected-photo ${loading ? "is-scanning" : ""}`}>
+            <Polaroid src={selected.image} alt={`Selected photo: ${selected.title}`} caption={selected.title} tilt={-1.5} />
+            <div className="selected-actions">
+              <button className="text-link" onClick={() => inputRef.current?.click()}><Icon name="upload" size={15} />Change photo</button>
+              <button className="text-link" onClick={clearPhoto}><Icon name="close" size={15} />Remove</button>
+            </div>
+          </div> : <div className={`upload-zone ${dragging ? "is-dragging" : ""}`} onDragOver={event => { event.preventDefault(); setDragging(true); }} onDragLeave={event => { if (!event.currentTarget.contains(event.relatedTarget)) setDragging(false); }} onDrop={event => { event.preventDefault(); setDragging(false); handleFile(event.dataTransfer.files?.[0]); }}>
+            <button className="upload-trigger" onClick={() => inputRef.current?.click()}>
+              <span className="upload-icon"><Icon name="image" size={26} /></span>
+              <strong>{dragging ? "Let go, we’ve got it." : "Drop a photo here"}</strong>
+              <span>or <u>pick one from your files</u></span>
+            </button>
+          </div>}
+          {error && <p className="inline-error" role="alert"><Icon name="info" size={16} />{error}</p>}
+          {authRequired && <p className="account-links"><Link to="/login">Sign in</Link> or <Link to="/register">create an account</Link> to continue.</p>}
+          <p className="photo-help mono"><Icon name="lock" size={12} />Sent securely. We don’t keep the photo.</p>
+          <fieldset className="preferences" disabled={loading}>
+            <legend>Songs in</legend>
+            <div className="language-options">
+              {LANGUAGES.map(option => <label key={option.value} className={language === option.value ? "is-active" : ""}>
+                <input type="radio" name="language" value={option.value} checked={language === option.value} onChange={() => chooseLanguage(option.value)} className="sr-only" />
+                {language === option.value ? <Circled>{option.label}</Circled> : option.label}
+              </label>)}
+            </div>
+          </fieldset>
+          <button className="button button-primary generate-button" onClick={generate} disabled={!selected || loading}>{loading ? <><span className="small-spinner" />Listening…</> : <>Make my playlist<Icon name="arrow" size={18} /></>}</button>
+          <p className="studio-status mono" role="status">{loading ? loadingLine : selected ? "Ready when you are." : "Waiting for a photo."}</p>
+        </div>
+        <div className="playlist-column" ref={resultRef}>{playlist ? <Playlist key={playlist.id} playlist={playlist} /> : <div className="empty-state studio-empty" role="status">
+          <Vinyl spinning={loading} label={loading ? "Playing" : "Side B"} />
+          <h3>{loading ? loadingLine : "Your tracklist goes here."}</h3>
+          <p>{loading ? "This usually takes a few seconds." : "Songs show up here once you’ve added a photo."}</p>
+        </div>}</div>
+      </div>
+    </section>
+
+    <section className="notes" aria-label="How PicTune works">
+      <h2>Liner notes</h2>
+      <ol>
+        <li><span className="mono">01</span><p><strong>Any photo works.</strong> Chai on the balcony, a wedding, a blurry night out. If it has a mood, there’s a song for it.</p></li>
+        <li><span className="mono">02</span><p><strong>You pick the language.</strong> Hindi, English, Marathi, or a mix of all three. Each track links straight to YouTube.</p></li>
+        <li><span className="mono">03</span><p><strong>Keep the good ones.</strong> Save a playlist to your library, or copy the tracklist to send to a friend.</p></li>
+      </ol>
+    </section>
+
+    <ProBanner />
   </div>;
 }

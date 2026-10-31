@@ -16,8 +16,4 @@ Only successful backend results populate the playlist. Requests that fail show t
 
 The latest result ID is kept in session storage and reloaded through `/api/results` on refresh. The library stores result text locally on this device, up to 24 entries. Photo bytes are not stored in the library. It uses `pictune-library-v2`; older local entries are left untouched and are not displayed.
 
-## Accounts and deployment
 
-Login and registration call the backend's `/api/login` and `/api/register` endpoints directly. Backend storage, signing credentials, allowed frontend origin, and vision-provider configuration must be set in the backend deployment. Only `VITE_API_URL` belongs in frontend configuration; never put backend secrets in a `VITE_` variable.
-
-Rebuild and redeploy the frontend after configuration or source changes. A reachable health endpoint does not establish that account or photo storage is configured.

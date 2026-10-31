@@ -20,5 +20,5 @@ export default function Register() {
     } catch (err) { setError(err.message); }
     finally { setLoading(false); }
   }
-  return <div className="auth-page"><div className="auth-story"><h1>Your PicTune account.</h1><p>Create an account to continue making photo playlists after your two free guest results.</p></div><AuthForm type="register" onSubmit={handleRegister} error={error} loading={loading}/></div>;
+  return <div className="auth-page"><div className="auth-story"><h1>Make an <em>account.</em></h1><p>Create an account to continue making photo playlists after your two free guest results.</p><ul className="auth-perks"><li>Keep going after your two free photos</li><li>Hang on to the playlists you like</li><li>Unlock captions whenever you want</li></ul></div><AuthForm type="register" onSubmit={handleRegister} error={error} loading={loading}/></div>;
 }

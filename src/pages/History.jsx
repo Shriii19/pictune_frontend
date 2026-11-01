@@ -18,7 +18,7 @@ export default function History() {
   return (
     <div className="standard-page">
       <div className="page-intro">
-        <h1>Your library</h1>
+        <h1>Your <em>library</em></h1>
         <p>Saved playlists on this device.</p>
       </div>
       <div className="library-toolbar">
@@ -44,9 +44,9 @@ export default function History() {
         </div>
       ) : (
         <div className="empty-state">
-          <span className="empty-icon"><Icon name={query ? "search" : "library"} size={28} /></span>
-          <h3>{query ? "No matching playlists" : "No saved playlists yet"}</h3>
-          <p>{query ? "Try another title, artist, or mood." : "Create a playlist, then save it to find it here."}</p>
+          {query ? <span className="empty-icon"><Icon name="search" size={26} /></span> : <span className="crate" aria-hidden="true"><i /><i /><i /></span>}
+          <h3>{query ? "No matching playlists" : "Your crate is empty."}</h3>
+          <p>{query ? "Try another title, artist, or mood." : "Save a playlist from the studio and it’ll wait for you here, on this device."}</p>
           {query ? <button className="button button-secondary" onClick={() => setQuery("")}>Clear search</button> : <Link className="button button-primary" to="/#studio">Create a playlist <Icon name="arrow" size={16} /></Link>}
         </div>
       )}

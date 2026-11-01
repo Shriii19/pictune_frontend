@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import Navbar from "./components/Navbar";
+import Navbar, { Brand } from "./components/Navbar";
 import Home from "./pages/Home";
 import History from "./pages/History";
 import About from "./pages/About";
+import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./App.css";
@@ -29,6 +30,7 @@ function Layout() {
             <Route path="/" element={<Home />} />
             <Route path="/dashboard" element={<Home />} />
             <Route path="/history" element={<History />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -37,8 +39,13 @@ function Layout() {
           </Routes>
         </main>
         <footer className="app-footer">
-          <span>© {new Date().getFullYear()} PicTune</span>
-          <div><Link to="/about">How PicTune works <span aria-hidden="true">↗</span></Link></div>
+          <div className="footer-brand"><Brand /><span>Songs for your photos.</span></div>
+          <div className="footer-links">
+            <Link to="/#studio">Studio</Link>
+            <Link to="/pricing">Pricing</Link>
+            <Link to="/about">How it works</Link>
+            <span className="mono">© {new Date().getFullYear()}</span>
+          </div>
         </footer>
       </div>
     </div>

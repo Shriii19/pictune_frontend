@@ -2,28 +2,29 @@ import { Link } from "react-router-dom";
 import Icon from "../components/Icon";
 
 const steps = [
-  { title: "Choose a photo", icon: "image", text: "Upload a JPG, PNG, WebP, or AVIF image up to 4 MB. The photo is sent securely to PicTune for processing. Raw photo bytes are not saved by the backend." },
-  { title: "Get your result", icon: "music", text: "Choose Hindi, English, Marathi, or all three. PicTune returns songs and captions, with the analysis method shown alongside the result. Colour estimates are labelled when scene recognition is unavailable." },
-  { title: "Save or listen", icon: "headphones", text: "Open tracks on YouTube, copy the track list, or save a playlist to your library. Saved playlists are stored on this device." },
+  { title: "Pick a photo", text: "Any JPG, PNG, WebP or AVIF up to 4 MB. It’s sent securely for processing, and we don’t keep it afterwards." },
+  { title: "Get your songs", text: "Choose Hindi, English, Marathi or all three. PicTune tells you what it saw and hands back songs to match. If it could only read the colours, it says so." },
+  { title: "Caption it", text: "With Lifetime Pro, every result comes with captions ready to paste, in your language and your tone. You pay for that once." },
+  { title: "Keep the good ones", text: "Play any track on YouTube, copy the tracklist for a friend, or save the playlist to your library on this device." },
 ];
 
 export default function About() {
   return (
     <div className="standard-page">
       <div className="page-intro">
-        <h1>How PicTune works</h1>
-        <p>Upload a photo, get your result, and keep the songs you like.</p>
+        <h1>How PicTune <em>works</em></h1>
+        <p>Four steps, about ten seconds. Here’s what happens between your photo and your playlist.</p>
       </div>
       <div className="process-grid">
         {steps.map((step, index) => (
           <article key={step.title}>
-            <span className="process-number">0{index + 1}<Icon name={step.icon} size={20} /></span>
+            <span className="process-number mono">0{index + 1}</span>
             <h3>{step.title}</h3>
             <p>{step.text}</p>
           </article>
         ))}
       </div>
-      <div className="about-cta"><p>Start with your own photo.</p><Link to="/#studio" className="button button-primary">Open studio <Icon name="arrow" size={16} /></Link></div>
+      <div className="about-cta"><p>Start with your own photo. It takes seconds.</p><Link to="/#studio" className="button button-primary">Open studio <Icon name="arrow" size={16} /></Link></div>
     </div>
   );
 }

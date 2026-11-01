@@ -23,6 +23,14 @@ const paths = {
   bolt: <path d="m13 2-9 12h7l-1 8 10-12h-7l1-8Z"/>,
   leaf: <><path d="M20 3C9 2 2 7 5 15s17 5 15-12Z"/><path d="M3 21 15 9"/></>,
   logout: <path d="M9 4H4v16h5m5-13 5 5-5 5m-7-5h12"/>,
+  lock: <><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></>,
+  crown: <path d="m3 7 4.5 4L12 4l4.5 7L21 7l-2 12H5L3 7Z"/>,
+  infinity: <path d="M7 8.5a3.5 3.5 0 1 0 0 7c3.5 0 6.5-7 10-7a3.5 3.5 0 1 1 0 7c-3.5 0-6.5-7-10-7Z"/>,
+  hash: <path d="M5 9h15M4 15h15M10 3 8 21M16 3l-2 18"/>,
+  share: <><path d="M12 15V3m-4 4 4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></>,
+  wand: <><path d="m4 20 11-11 2 2L6 22l-2-2Z"/><path d="M14 4V2m0 8V8m-4-2H8m12 0h-2m-1-3 1.5-1.5M17 9l1.5 1.5"/></>,
+  cloud: <path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 19.6 10 4 4 0 0 1 18 18H7Z"/>,
+  text: <path d="M4 6h16M4 12h10M4 18h13"/>,
 };
 
 export default function Icon({ name, size = 20, className = "", ...props }) {
